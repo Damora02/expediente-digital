@@ -14,6 +14,7 @@ const DOCUMENTOS = [
 function MisExpedientesPage() {
   const navigate = useNavigate();
   const [empleados, setEmpleados] = useState([]);
+  
   const [cargando, setCargando] = useState(true);
   const [busqueda, setBusqueda] = useState('');
   const [pdfActivo, setPdfActivo] = useState(null);
