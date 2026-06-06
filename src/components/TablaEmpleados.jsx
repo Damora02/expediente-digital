@@ -11,7 +11,8 @@ function TablaEmpleados({ empleados, onEditar, onEliminar }) {
       emp.nombre?.toLowerCase().includes(texto) ||
       emp.apellido?.toLowerCase().includes(texto) ||
       emp.cedula?.toLowerCase().includes(texto) ||
-      emp.puesto?.toLowerCase().includes(texto)
+      emp.puesto?.toLowerCase().includes(texto) ||
+      emp.lugarTrabajo?.toLowerCase().includes(texto)  // ← también busca por lugar
     );
   });
 
@@ -27,7 +28,7 @@ function TablaEmpleados({ empleados, onEditar, onEliminar }) {
         </h2>
         <input
           type="text"
-          placeholder="Buscar por nombre, cédula o puesto..."
+          placeholder="Buscar por nombre, cédula, puesto o lugar..."
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
           className="border border-gray-300 rounded-lg px-3 py-2 text-sm
@@ -45,6 +46,7 @@ function TablaEmpleados({ empleados, onEditar, onEliminar }) {
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Teléfono</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Correo</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Puesto</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Lugar de trabajo</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Ingreso</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Acciones</th>
             </tr>
@@ -52,7 +54,7 @@ function TablaEmpleados({ empleados, onEditar, onEliminar }) {
           <tbody className="divide-y divide-gray-100">
             {empleadosFiltrados.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-4 py-8 text-center text-gray-400">
+                <td colSpan={8} className="px-4 py-8 text-center text-gray-400">
                   No se encontraron empleados
                 </td>
               </tr>
@@ -76,6 +78,11 @@ function TablaEmpleados({ empleados, onEditar, onEliminar }) {
                   <td className="px-4 py-3">
                     <span className="bg-blue-50 text-blue-700 text-xs px-2 py-1 rounded-full font-medium">
                       {emp.puesto}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className="bg-purple-50 text-purple-700 text-xs px-2 py-1 rounded-full font-medium">
+                      {emp.lugarTrabajo || '—'}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-gray-600">

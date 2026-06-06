@@ -48,7 +48,7 @@ function EmpleadosPage() {
       <Navbar />
       <div className="flex flex-1">
         <Sidebar />
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-6 pl-14">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h1 className="text-2xl font-bold text-gray-800">Gestion de empleados</h1>

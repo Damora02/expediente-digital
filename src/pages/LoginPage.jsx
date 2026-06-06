@@ -44,20 +44,25 @@ function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-pink-200 flex items-center justify-center p-4">
-      <div className="bg-cyan-100 border border-cyan-200 rounded-2xl shadow-xl w-full max-w-md p-8">
+    <div className="min-h-screen flex items-center justify-center p-4"
+      style={{ background: '#FF33CC' }}>
+      <div className="rounded-2xl shadow-xl w-full max-w-md p-8"
+  style={{ background: '#00BFFF', border: '1px solid #0099cc' }}>
 
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-pink-400 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+          <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg"
+            style={{ background: '#FF33CC' }}>
             <span className="text-white text-2xl font-bold">DP</span>
           </div>
-          <h1 className="text-2xl font-bold text-pink-800">Deco Pastel Costa Rica</h1>
+          <h1 className="text-2xl font-bold" style={{ color: '#cc00a3' }}>
+            Deco Pastel Costa Rica
+          </h1>
           <p className="text-cyan-700 text-sm mt-1">Ingrese sus credenciales para continuar</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-pink-700 mb-1">
+            <label className="block text-sm font-medium mb-1" style={{ color: '#FF33CC' }}>
               Usuario
             </label>
             <input
@@ -68,12 +73,15 @@ function LoginPage() {
               placeholder="Ingrese su usuario"
               autoComplete="username"
               disabled={cargando}
-              className="w-full border border-cyan-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 disabled:bg-gray-50 transition bg-white"
+              className="w-full border border-cyan-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none disabled:bg-gray-50 transition bg-white"
+              style={{ '--tw-ring-color': '#FF33CC' }}
+              onFocus={e => e.target.style.boxShadow = '0 0 0 2px #FF33CC55'}
+              onBlur={e => e.target.style.boxShadow = 'none'}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-pink-700 mb-1">
+            <label className="block text-sm font-medium mb-1" style={{ color: '#FF33CC' }}>
               Contrasena
             </label>
             <input
@@ -84,7 +92,9 @@ function LoginPage() {
               placeholder="Ingrese su contrasena"
               autoComplete="current-password"
               disabled={cargando}
-              className="w-full border border-cyan-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 disabled:bg-gray-50 transition bg-white"
+              className="w-full border border-cyan-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none disabled:bg-gray-50 transition bg-white"
+              onFocus={e => e.target.style.boxShadow = '0 0 0 2px #FF33CC55'}
+              onBlur={e => e.target.style.boxShadow = 'none'}
             />
           </div>
 
@@ -98,7 +108,10 @@ function LoginPage() {
           <button
             type="submit"
             disabled={cargando}
-            className="w-full bg-pink-400 hover:bg-pink-500 text-white font-semibold py-2.5 rounded-lg transition-colors duration-200 text-sm disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-sm mt-2"
+            className="w-full text-white font-semibold py-2.5 rounded-lg transition-colors duration-200 text-sm disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-sm mt-2"
+            style={{ background: '#FF33CC' }}
+            onMouseEnter={e => e.currentTarget.style.background = '#cc00a3'}
+            onMouseLeave={e => e.currentTarget.style.background = '#FF33CC'}
           >
             {cargando ? (
               <>
@@ -111,15 +124,16 @@ function LoginPage() {
           </button>
         </form>
 
-        <div className="mt-6 p-4 bg-pink-50 rounded-lg border border-pink-200">
-          <p className="text-xs font-semibold text-pink-500 mb-2">
+        <div className="mt-6 p-4 rounded-lg border"
+          style={{ background: '#FF33CC11', borderColor: '#FF33CC33' }}>
+          <p className="text-xs font-semibold mb-2" style={{ color: '#FF33CC' }}>
             Credenciales de prueba:
           </p>
           <div className="space-y-1">
-            <p className="text-xs text-pink-600">
+            <p className="text-xs" style={{ color: '#cc00a3' }}>
               <span className="font-medium">Admin:</span> admin / 1234
             </p>
-            <p className="text-xs text-pink-600">
+            <p className="text-xs" style={{ color: '#cc00a3' }}>
               <span className="font-medium">Usuario:</span> empleado1 / 1234
             </p>
           </div>

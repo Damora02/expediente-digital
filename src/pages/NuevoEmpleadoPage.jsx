@@ -60,7 +60,7 @@ function NuevoEmpleadoPage() {
       <Navbar />
       <div className="flex flex-1">
         <Sidebar />
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-6 pl-14">
           <div className="flex items-center gap-3 mb-6">
             <button
               onClick={() => navigate('/empleados')}

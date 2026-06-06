@@ -8,6 +8,7 @@ const VACIO = {
   correo: '',
   puesto: '',
   fechaIngreso: '',
+  lugarTrabajo: '',
 };
 
 const Campo = ({ label, name, type = 'text', requerido = true, value, onChange, disabled, error }) => (
@@ -69,6 +70,7 @@ function FormularioEmpleado({ datosIniciales, onGuardar, cargando }) {
         correo:       datosIniciales.correo       || '',
         puesto:       datosIniciales.puesto       || '',
         fechaIngreso: datosIniciales.fechaIngreso || '',
+        lugarTrabajo:  datosIniciales.lugarTrabajo || '', 
       });
     }
   }, [datosIniciales]);
@@ -101,6 +103,9 @@ function FormularioEmpleado({ datosIniciales, onGuardar, cargando }) {
     if (!form.correo.trim())      nuevosErrores.correo       = 'El correo es requerido';
     if (!form.puesto.trim())      nuevosErrores.puesto       = 'El puesto es requerido';
     if (!form.fechaIngreso)       nuevosErrores.fechaIngreso = 'La fecha de ingreso es requerida';
+    if (!form.lugarTrabajo.trim()) nuevosErrores.lugarTrabajo = 'El lugar de trabajo es requerido';
+    
+    
     if (form.correo && !/\S+@\S+\.\S+/.test(form.correo)) {
       nuevosErrores.correo = 'Formato de correo invalido';
     }
@@ -128,6 +133,8 @@ function FormularioEmpleado({ datosIniciales, onGuardar, cargando }) {
           <Campo label="Correo electronico" name="correo"       value={form.correo}       onChange={handleChange} disabled={cargando} error={errores.correo} type="email" />
           <Campo label="Puesto"             name="puesto"       value={form.puesto}       onChange={handleChange} disabled={cargando} error={errores.puesto} />
           <Campo label="Fecha de ingreso"   name="fechaIngreso" value={form.fechaIngreso} onChange={handleChange} disabled={cargando} error={errores.fechaIngreso} type="date" />
+          <Campo label="Lugar de trabajo" name="lugarTrabajo" value={form.lugarTrabajo} onChange={handleChange} disabled={cargando}error={errores.lugarTrabajo}/>
+          
         </div>
       </div>
 

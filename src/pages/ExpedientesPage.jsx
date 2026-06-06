@@ -91,7 +91,7 @@ function ExpedientesPage() {
       <Navbar />
       <div className="flex flex-1">
         <Sidebar />
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-6 pl-14">
           <div className="flex items-center gap-3 mb-6">
             <button
               onClick={() => navigate(usuario?.rol === 'admin' ? '/empleados' : '/dashboard')}
@@ -106,12 +106,14 @@ function ExpedientesPage() {
               </p>
             </div>
           </div>
+
+          {/* Tarjeta de datos del empleado */}
           <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200 mb-6">
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xl font-bold flex-shrink-0">
                 {empleado?.nombre?.[0]}{empleado?.apellido?.[0]}
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 flex-1">
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4 flex-1">
                 <div>
                   <p className="text-xs text-gray-400">Cedula</p>
                   <p className="text-sm font-medium text-gray-700">{empleado?.cedula}</p>
@@ -130,9 +132,15 @@ function ExpedientesPage() {
                     {empleado?.fechaIngreso ? new Date(empleado.fechaIngreso).toLocaleDateString('es-CR') : '-'}
                   </p>
                 </div>
+                <div>
+                  <p className="text-xs text-gray-400">Lugar de trabajo</p>
+                  <p className="text-sm font-medium text-gray-700">{empleado?.lugarTrabajo || '-'}</p>
+                </div>
               </div>
             </div>
           </div>
+
+          {/* Documentos */}
           <h2 className="font-semibold text-gray-700 mb-4">Documentos del expediente</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {DOCUMENTOS.map(({ tipo, label, icono }) => {

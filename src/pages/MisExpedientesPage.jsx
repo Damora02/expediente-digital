@@ -1,58 +1,35 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
+import { useAuth } from '../context/AuthContext';
 import { getEmpleados } from '../services/empleadoService';
-import { obtenerArchivo, descargarArchivo } from '../services/expedienteService';
-
-const DOCUMENTOS = [
-  { tipo: 'contrato', label: 'Contrato laboral', icono: '📋' },
-  { tipo: 'entrevista', label: 'Entrevista', icono: '🗣️' },
-  { tipo: 'cv', label: 'Curriculum vitae (CV)', icono: '📄' },
-];
 
 function MisExpedientesPage() {
-  const navigate = useNavigate();
-  const [empleados, setEmpleados] = useState([]);
-  
+  const { usuario } = useAuth();
+  const [expediente, setExpediente] = useState(null);
+  const [modalAbierto, setModalAbierto] = useState(false);
   const [cargando, setCargando] = useState(true);
-  const [busqueda, setBusqueda] = useState('');
-  const [pdfActivo, setPdfActivo] = useState(null);
 
   useEffect(() => {
-    const cargar = async () => {
+    const cargarExpediente = async () => {
       try {
-        const datos = await getEmpleados();
-        setEmpleados(datos);
-      } catch (err) {
-        alert('No se pudieron cargar los expedientes.');
+        const empleados = await getEmpleados();
+        const miExpediente = empleados.find(
+          (e) => String(e.id) === String(usuario?.empleadoId)
+        );
+        setExpediente(miExpediente);
+      } catch (error) {
+        console.error('Error:', error);
       } finally {
         setCargando(false);
       }
     };
-    cargar();
-  }, []);
+    cargarExpediente();
+  }, [usuario]);
 
-  const empleadosFiltrados = empleados.filter((emp) => {
-    const texto = busqueda.toLowerCase();
-    return (
-      emp.nombre?.toLowerCase().includes(texto) ||
-      emp.apellido?.toLowerCase().includes(texto) ||
-      emp.puesto?.toLowerCase().includes(texto)
-    );
-  });
-
-  const handleVer = (empleadoId, tipo) => {
-    const archivo = obtenerArchivo(empleadoId, tipo);
-    if (!archivo) {
-      alert('No hay archivo disponible para este documento.');
-      return;
-    }
-    setPdfActivo({ base64: archivo.base64, nombre: archivo.nombre });
-  };
-
-  const handleDescargar = (empleadoId, tipo, label, empleado) => {
-    descargarArchivo(empleadoId, tipo, `${label}_${empleado.nombre}_${empleado.apellido}.pdf`);
+  const formatearFecha = (fecha) => {
+    if (!fecha) return 'No registrada';
+    return new Date(fecha).toLocaleDateString('es-CR');
   };
 
   return (
@@ -60,99 +37,173 @@ function MisExpedientesPage() {
       <Navbar />
       <div className="flex flex-1">
         <Sidebar />
-        <main className="flex-1 p-6">
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold text-gray-800">Expedientes</h1>
-            <p className="text-gray-500 text-sm mt-1">Consulte los expedientes del personal</p>
-          </div>
+        <main className="flex-1 p-6 pl-14">
 
-          <div className="mb-4">
-            <input
-              type="text"
-              placeholder="Buscar por nombre o puesto..."
-              value={busqueda}
-              onChange={(e) => setBusqueda(e.target.value)}
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm w-72 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+          <div className="mb-6">
+            <h1 className="text-2xl font-bold text-gray-800">Mi expediente</h1>
+            <p className="text-gray-400 text-sm mt-1">
+              {new Date().toLocaleDateString('es-CR')}
+            </p>
           </div>
 
           {cargando ? (
-            <div className="text-center py-12">
-              <p className="text-gray-400 animate-pulse">Cargando expedientes...</p>
+            <div className="flex items-center justify-center h-40">
+              <p className="text-gray-400 text-sm">Cargando expediente...</p>
+            </div>
+          ) : expediente ? (
+            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden max-w-xl">
+
+              <div className="p-5 flex items-center gap-4"
+                style={{ background: '#FF33CC' }}>
+                <div className="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold text-white flex-shrink-0"
+                  style={{ background: 'rgba(255,255,255,0.25)' }}>
+                  {expediente.nombre?.charAt(0)}{expediente.apellido?.charAt(0)}
+                </div>
+                <div>
+                  <p className="text-white font-semibold text-base">
+                    {expediente.nombre} {expediente.apellido}
+                  </p>
+                  <p className="text-white text-xs opacity-80 capitalize">
+                    {expediente.puesto}
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-5 border-b border-gray-100">
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+                  Datos personales
+                </p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-xs text-gray-400">Cédula</p>
+                    <p className="text-sm font-medium text-gray-700">{expediente.cedula || 'No registrada'}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400">Teléfono</p>
+                    <p className="text-sm font-medium text-gray-700">{expediente.telefono || 'No registrado'}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400">Correo</p>
+                    <p className="text-sm font-medium text-gray-700">{expediente.correo || 'No registrado'}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400">Fecha de ingreso</p>
+                    <p className="text-sm font-medium text-gray-700">{formatearFecha(expediente.fechaIngreso)}</p>
+                  </div>
+                  {/* ← nuevo */}
+                  <div>
+                    <p className="text-xs text-gray-400">Lugar de trabajo</p>
+                    <p className="text-sm font-medium text-gray-700">{expediente.lugarTrabajo || 'No registrado'}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-5 border-b border-gray-100">
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+                  Documentos adjuntos
+                </p>
+                <div className="flex flex-col gap-2">
+                  {[
+                    { label: 'Contrato', valor: expediente.contrato },
+                    { label: 'Entrevista', valor: expediente.entrevista },
+                    { label: 'Curriculum (CV)', valor: expediente.cv },
+                  ].map((doc) => (
+                    <div key={doc.label}
+                      className="flex items-center gap-3 p-3 rounded-lg border border-gray-100 bg-gray-50">
+                      <span className="text-lg">📄</span>
+                      <span className="flex-1 text-sm text-gray-700 font-medium">{doc.label}</span>
+                      {doc.valor ? (
+                        <a href={doc.valor} target="_blank" rel="noopener noreferrer"
+                          className="text-xs px-3 py-1 rounded-full font-medium border"
+                          style={{ background: '#FF33CC11', color: '#cc00a3', borderColor: '#FF33CC33' }}>
+                          Ver
+                        </a>
+                      ) : (
+                        <span className="text-xs px-3 py-1 rounded-full bg-gray-100 text-gray-400 border border-gray-200">
+                          No adjunto
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="p-4 flex gap-3">
+                <button
+                  onClick={() => setModalAbierto(true)}
+                  className="flex-1 py-2.5 rounded-lg text-white text-sm font-medium border-none cursor-pointer"
+                  style={{ background: '#FF33CC' }}
+                  onMouseEnter={e => e.currentTarget.style.background = '#cc00a3'}
+                  onMouseLeave={e => e.currentTarget.style.background = '#FF33CC'}
+                >
+                  📥 Descargar PDF
+                </button>
+                <button
+                  onClick={() => window.print()}
+                  className="flex-1 py-2.5 rounded-lg text-white text-sm font-medium border-none cursor-pointer"
+                  style={{ background: '#00BFFF' }}
+                  onMouseEnter={e => e.currentTarget.style.background = '#0099cc'}
+                  onMouseLeave={e => e.currentTarget.style.background = '#00BFFF'}
+                >
+                  🖨️ Imprimir
+                </button>
+              </div>
+
             </div>
           ) : (
-            <div className="flex flex-col gap-4">
-              {empleadosFiltrados.length === 0 ? (
-                <div className="bg-white rounded-xl p-12 text-center shadow-sm border border-gray-200">
-                  <p className="text-gray-400">No se encontraron empleados</p>
-                </div>
-              ) : (
-                empleadosFiltrados.map((emp) => (
-                  <div key={emp.id} className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm flex-shrink-0">
-                        {emp.nombre?.[0]}{emp.apellido?.[0]}
-                      </div>
-                      <div>
-                        <p className="font-semibold text-gray-800">{emp.nombre} {emp.apellido}</p>
-                        <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">{emp.puesto}</span>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                      {DOCUMENTOS.map(({ tipo, label, icono }) => {
-                        const archivo = obtenerArchivo(emp.id, tipo);
-                        const tieneArchivo = Boolean(archivo);
-                        return (
-                          <div key={tipo} className="border border-gray-100 rounded-lg p-3 bg-gray-50 flex items-center justify-between gap-3">
-                            <div className="flex items-center gap-2">
-                              <span className="text-xl">{icono}</span>
-                              <div>
-                                <p className="text-xs font-medium text-gray-700">{label}</p>
-                                <p className={`text-xs ${tieneArchivo ? 'text-green-600' : 'text-gray-400'}`}>
-                                  {tieneArchivo ? archivo.nombre : 'Sin archivo'}
-                                </p>
-                              </div>
-                            </div>
-                            <div className="flex gap-1">
-                              <button
-                                onClick={() => handleVer(emp.id, tipo)}
-                                disabled={!tieneArchivo}
-                                className="text-xs bg-blue-50 text-blue-700 hover:bg-blue-100 px-2 py-1 rounded border border-blue-200 disabled:opacity-40 disabled:cursor-not-allowed"
-                              >
-                                👁️
-                              </button>
-                              <button
-                                onClick={() => handleDescargar(emp.id, tipo, label, emp)}
-                                disabled={!tieneArchivo}
-                                className="text-xs bg-green-50 text-green-700 hover:bg-green-100 px-2 py-1 rounded border border-green-200 disabled:opacity-40 disabled:cursor-not-allowed"
-                              >
-                                ⬇️
-                              </button>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                ))
-              )}
+            <div className="flex items-center justify-center h-40 bg-white rounded-xl border border-gray-200">
+              <p className="text-gray-400 text-sm">No se encontró tu expediente.</p>
             </div>
           )}
+
         </main>
       </div>
 
-      {pdfActivo && (
-        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl w-full max-w-4xl h-[90vh] flex flex-col">
-            <div className="flex items-center justify-between px-4 py-3 border-b">
-              <p className="font-medium text-gray-800 text-sm">{pdfActivo.nombre}</p>
-              <button onClick={() => setPdfActivo(null)} className="text-gray-500 hover:text-gray-800 text-lg">✕</button>
+      {modalAbierto && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center"
+          style={{ background: 'rgba(0,0,0,0.4)' }}
+          onClick={() => setModalAbierto(false)}>
+          <div className="bg-white rounded-xl overflow-hidden w-full max-w-sm mx-4"
+            onClick={e => e.stopPropagation()}>
+
+            <div className="p-4 flex items-center justify-between"
+              style={{ background: '#FF33CC' }}>
+              <span className="text-white font-medium text-sm">📄 Descargar expediente</span>
+              <button onClick={() => setModalAbierto(false)}
+                className="text-white text-lg border-none bg-transparent cursor-pointer">✕</button>
             </div>
-            <iframe src={pdfActivo.base64} className="flex-1 rounded-b-xl" title={pdfActivo.nombre} />
+
+            <div className="p-5 flex flex-col items-center gap-3 text-center">
+              <div className="w-14 h-14 rounded-full flex items-center justify-center text-2xl"
+                style={{ background: '#FF33CC15' }}>📄</div>
+              <p className="text-sm font-medium text-gray-700">
+                Expediente_{expediente?.nombre}_{expediente?.apellido}.pdf
+              </p>
+              <p className="text-xs text-gray-400">
+                Incluye datos personales y documentos adjuntos
+              </p>
+            </div>
+
+            <div className="p-4 flex gap-3 border-t border-gray-100">
+              <button
+                className="flex-1 py-2.5 rounded-lg text-white text-sm font-medium border-none cursor-pointer"
+                style={{ background: '#FF33CC' }}
+                onClick={() => setModalAbierto(false)}
+              >
+                📥 Confirmar descarga
+              </button>
+              <button
+                className="flex-1 py-2.5 rounded-lg text-sm font-medium border border-gray-200 bg-white text-gray-600 cursor-pointer"
+                onClick={() => setModalAbierto(false)}
+              >
+                Cancelar
+              </button>
+            </div>
+
           </div>
         </div>
       )}
+
     </div>
   );
 }
