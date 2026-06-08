@@ -153,7 +153,10 @@ function FormularioEmpleado({ datosIniciales, onGuardar, cargando }) {
         <button
           type="submit"
           disabled={cargando}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg font-medium text-sm transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2 shadow-sm"
+          className="text-white px-6 py-2.5 rounded-lg font-medium text-sm transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2 shadow-sm"
+          style={{ background: '#00BFFF' }}
+          onMouseEnter={e => e.currentTarget.style.background = '#0099cc'}
+          onMouseLeave={e => e.currentTarget.style.background = '#00BFFF'}
         >
           {cargando ? <><span className="animate-spin">⏳</span> Guardando...</> : <>💾 Guardar empleado</>}
         </button>

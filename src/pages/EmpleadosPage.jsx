@@ -56,7 +56,10 @@ function EmpleadosPage() {
             </div>
             <button
               onClick={() => navigate('/empleados/nuevo')}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-medium text-sm transition-colors flex items-center gap-2 shadow-sm"
+              className="text-white px-5 py-2.5 rounded-lg font-medium text-sm transition-colors flex items-center gap-2 shadow-sm"
+            style={{ background: '#00BFFF' }}
+            onMouseEnter={e => e.currentTarget.style.background = '#0099cc'}
+            onMouseLeave={e => e.currentTarget.style.background = '#00BFFF'}
             >
               ➕ Nuevo empleado
             </button>

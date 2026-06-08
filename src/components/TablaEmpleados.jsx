@@ -76,13 +76,13 @@ function TablaEmpleados({ empleados, onEditar, onEliminar }) {
                   <td className="px-4 py-3 text-gray-600">{emp.telefono}</td>
                   <td className="px-4 py-3 text-gray-600">{emp.correo}</td>
                   <td className="px-4 py-3">
-                    <span className="bg-blue-50 text-blue-700 text-xs px-2 py-1 rounded-full font-medium">
-                      {emp.puesto}
-                    </span>
+                    <span className="bg-white text-gray-800 text-xs px-2 py-1 rounded-full font-medium">
+                    {emp.puesto}
+                   </span>
                   </td>
                   <td className="px-4 py-3">
-                    <span className="bg-purple-50 text-purple-700 text-xs px-2 py-1 rounded-full font-medium">
-                      {emp.lugarTrabajo || '—'}
+                    <span className="bg-white text-gray-800 text-xs px-2 py-1 rounded-full font-medium">
+                    {emp.lugarTrabajo || '—'}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-gray-600">

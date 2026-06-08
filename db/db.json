@@ -19,7 +19,7 @@
     {
       "nombre": "Douglas Alberto",
       "apellido": "Mora Cascante",
-      "cedula": "123456",
+      "cedula": "112140878",
       "telefono": "88778771",
       "correo": "domoracas@gmail.com",
       "puesto": "chofer",
@@ -28,7 +28,6 @@
       "id": "1"
     },
     {
-      "id": "2",
       "nombre": "carlos",
       "apellido": "mocas",
       "cedula": "155821057001",
@@ -36,9 +35,8 @@
       "correo": "inversionesmocas98@gmail.com",
       "puesto": "cajero",
       "fechaIngreso": "2026-05-09",
-      "contrato": null,
-      "entrevista": null,
-      "cv": null
+      "lugarTrabajo": "Liberia",
+      "id": "2"
     },
     {
       "nombre": "zayra",
