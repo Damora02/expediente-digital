@@ -25,6 +25,8 @@
       "puesto": "chofer",
       "fechaIngreso": "2026-04-30",
       "lugarTrabajo": "Nicoya",
+      "nacionalidad": "Costarricense",
+      "genero": "Masculino",
       "id": "1"
     },
     {
@@ -47,6 +49,8 @@
       "puesto": "vendedor",
       "fechaIngreso": "2026-06-01",
       "lugarTrabajo": "Nicoya",
+      "nacionalidad": "Costarricense",
+      "genero": "Femenino",
       "id": "3"
     }
   ],

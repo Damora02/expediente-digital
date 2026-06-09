@@ -138,18 +138,18 @@ function ExpedientesPage() {
               <div className="w-14 h-14 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xl font-bold flex-shrink-0">
                 {empleado?.nombre?.[0]}{empleado?.apellido?.[0]}
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-4 flex-1">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 flex-1">
                 <div>
                   <p className="text-xs text-gray-400">Cedula</p>
-                  <p className="text-sm font-medium text-gray-700">{empleado?.cedula}</p>
+                  <p className="text-sm font-medium text-gray-700">{empleado?.cedula || '-'}</p>
                 </div>
                 <div>
                   <p className="text-xs text-gray-400">Telefono</p>
-                  <p className="text-sm font-medium text-gray-700">{empleado?.telefono}</p>
+                  <p className="text-sm font-medium text-gray-700">{empleado?.telefono || '-'}</p>
                 </div>
                 <div>
                   <p className="text-xs text-gray-400">Correo</p>
-                  <p className="text-sm font-medium text-gray-700">{empleado?.correo}</p>
+                  <p className="text-sm font-medium text-gray-700">{empleado?.correo || '-'}</p>
                 </div>
                 <div>
                   <p className="text-xs text-gray-400">Fecha de ingreso</p>
@@ -160,6 +160,14 @@ function ExpedientesPage() {
                 <div>
                   <p className="text-xs text-gray-400">Lugar de trabajo</p>
                   <p className="text-sm font-medium text-gray-700">{empleado?.lugarTrabajo || '-'}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-400">Nacionalidad</p>
+                  <p className="text-sm font-medium text-gray-700">{empleado?.nacionalidad || '-'}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-400">Género</p>
+                  <p className="text-sm font-medium text-gray-700">{empleado?.genero || '-'}</p>
                 </div>
               </div>
             </div>

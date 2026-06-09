@@ -136,6 +136,26 @@ function MisExpedientesPage() {
                     <p className="text-xs text-gray-400">Lugar de trabajo</p>
                     <p className="text-sm font-medium text-gray-700">{empleadoSeleccionado.lugarTrabajo || '—'}</p>
                   </div>
+                  <div>
+                    <p className="text-xs text-gray-400">Nacionalidad</p>
+                    <p className="text-sm font-medium text-gray-700">{empleadoSeleccionado.nacionalidad || '—'}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400">Género</p>
+                    <p className="text-sm font-medium text-gray-700">{empleadoSeleccionado.genero || '—'}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400">Edad</p>
+                    <p className="text-sm font-medium text-gray-700">{empleadoSeleccionado.edad || '—'}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400">Estado civil</p>
+                    <p className="text-sm font-medium text-gray-700">{empleadoSeleccionado.estadoCivil || '—'}</p>
+                  </div>
+                  <div className="col-span-2">
+                    <p className="text-xs text-gray-400">IBAN</p>
+                    <p className="text-sm font-medium text-gray-700">{empleadoSeleccionado.iban || '—'}</p>
+                  </div>
                 </div>
               </div>
 
@@ -264,12 +284,12 @@ function MisExpedientesPage() {
                         </td>
                         <td className="px-4 py-3 text-gray-600">{emp.cedula}</td>
                         <td className="px-4 py-3">
-                          <span className="bg-blue-50 text-blue-700 text-xs px-2 py-1 rounded-full font-medium">
+                          <span className="bg-white text-gray-800 text-xs px-2 py-1 rounded-full font-medium">
                             {emp.puesto}
                           </span>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="bg-purple-50 text-purple-700 text-xs px-2 py-1 rounded-full font-medium">
+                          <span className="bg-white text-gray-800 text-xs px-2 py-1 rounded-full font-medium">
                             {emp.lugarTrabajo || '—'}
                           </span>
                         </td>
