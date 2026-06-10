@@ -1,6 +1,31 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+
+function Reloj() {
+  const [hora, setHora] = useState('');
+
+  useEffect(() => {
+    const actualizar = () => {
+      const ahora = new Date();
+      setHora(ahora.toLocaleTimeString('es-CR', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      }));
+    };
+    actualizar();
+    const intervalo = setInterval(actualizar, 1000);
+    return () => clearInterval(intervalo);
+  }, []);
+
+  return (
+    <span className="text-sm font-mono font-bold text-gray-900">
+      {hora}
+    </span>
+  );
+}
 
 function Sidebar() {
   const { usuario } = useAuth();
@@ -97,6 +122,7 @@ function Sidebar() {
 
         {/* Info del usuario */}
         <div className="mt-auto px-4 py-3 bg-gray-50 rounded-lg">
+          <p className="text-sm font-bold text-gray-900 mb-1"><Reloj /></p>
           <p className="text-xs text-gray-500 font-medium">Sesion activa</p>
           <p className="text-sm text-gray-700 font-semibold mt-0.5">
             {usuario?.usuario}
@@ -105,9 +131,10 @@ function Sidebar() {
             {usuario?.rol}
           </p>
         </div>
+
       </div>
     </>
   );
 }
 
-export default Sidebar;
+export default Sidebar; 

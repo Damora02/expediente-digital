@@ -29,7 +29,7 @@ function LoginPage() {
       if (resultado) {
         login(resultado);
         if (resultado.rol === 'admin') {
-          navigate('/empleados');
+          navigate('/dashboard');
         } else {
           navigate('/dashboard');
         }

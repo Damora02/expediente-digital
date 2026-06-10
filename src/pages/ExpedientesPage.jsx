@@ -169,6 +169,26 @@ function ExpedientesPage() {
                   <p className="text-xs text-gray-400">Género</p>
                   <p className="text-sm font-medium text-gray-700">{empleado?.genero || '-'}</p>
                 </div>
+
+                {/* Solo visibles si tienen valor */}
+                {empleado?.edad && (
+                  <div>
+                    <p className="text-xs text-gray-400">Edad</p>
+                    <p className="text-sm font-medium text-gray-700">{empleado.edad}</p>
+                  </div>
+                )}
+                {empleado?.estadoCivil && (
+                  <div>
+                    <p className="text-xs text-gray-400">Estado civil</p>
+                    <p className="text-sm font-medium text-gray-700">{empleado.estadoCivil}</p>
+                  </div>
+                )}
+                {empleado?.iban && (
+                  <div className="col-span-2">
+                    <p className="text-xs text-gray-400">IBAN</p>
+                    <p className="text-sm font-medium text-gray-700">{empleado.iban}</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
