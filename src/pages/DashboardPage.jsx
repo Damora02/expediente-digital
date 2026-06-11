@@ -34,15 +34,20 @@ function DashboardPage() {
   };
 
   const empleadosFiltrados = empleados.filter((emp) => {
-    const texto = busqueda.toLowerCase();
-    return (
-      emp.nombre?.toLowerCase().includes(texto) ||
-      emp.apellido?.toLowerCase().includes(texto) ||
-      emp.cedula?.toLowerCase().includes(texto) ||
-      emp.puesto?.toLowerCase().includes(texto) ||
-      emp.lugarTrabajo?.toLowerCase().includes(texto)
-    );
-  });
+  const texto = busqueda.toLowerCase();
+  return (
+    emp.nombre?.toLowerCase().includes(texto) ||
+    emp.apellido?.toLowerCase().includes(texto) ||
+    emp.cedula?.toLowerCase().includes(texto) ||
+    emp.puesto?.toLowerCase().includes(texto) ||
+    emp.lugarTrabajo?.toLowerCase().includes(texto) ||
+    emp.telefono?.toLowerCase().includes(texto) ||
+    emp.correo?.toLowerCase().includes(texto) ||
+    emp.nacionalidad?.toLowerCase().includes(texto) ||
+    emp.genero?.toLowerCase().includes(texto) ||
+    emp.estadoCivil?.toLowerCase().includes(texto)
+  );
+});
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
@@ -149,16 +154,9 @@ function DashboardPage() {
                           </div>
                         </td>
                         <td className="px-4 py-3 text-gray-600">{emp.cedula}</td>
-                        <td className="px-4 py-3">
-                          <span className="bg-white text-gray-800 text-xs px-2 py-1 rounded-full font-medium">
-                        {emp.puesto}
-                        </span>
-                        </td>
-                        <td className="px-4 py-3">
-                          <span className="bg-white text-gray-800 text-xs px-2 py-1 rounded-full font-medium">
-                          {emp.lugarTrabajo || '—'}
-                         </span>
-                        </td>
+                        <td className="px-4 py-3 text-gray-600">{emp.puesto}</td>
+                          
+                        <td className="px-4 py-3 text-gray-600">{emp.lugarTrabajo || '—'}</td>
                         <td className="px-4 py-3 text-gray-600">{formatearFecha(emp.fechaIngreso)}</td>
                         <td className="px-4 py-3">
                           <button

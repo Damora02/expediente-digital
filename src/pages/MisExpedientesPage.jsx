@@ -44,15 +44,20 @@ function MisExpedientesPage() {
   };
 
   const empleadosFiltrados = empleados.filter((emp) => {
-    const texto = busqueda.toLowerCase();
-    return (
-      emp.nombre?.toLowerCase().includes(texto) ||
-      emp.apellido?.toLowerCase().includes(texto) ||
-      emp.cedula?.toLowerCase().includes(texto) ||
-      emp.puesto?.toLowerCase().includes(texto) ||
-      emp.lugarTrabajo?.toLowerCase().includes(texto)
-    );
-  });
+  const texto = busqueda.toLowerCase();
+  return (
+    emp.nombre?.toLowerCase().includes(texto) ||
+    emp.apellido?.toLowerCase().includes(texto) ||
+    emp.cedula?.toLowerCase().includes(texto) ||
+    emp.puesto?.toLowerCase().includes(texto) ||
+    emp.lugarTrabajo?.toLowerCase().includes(texto) ||
+    emp.telefono?.toLowerCase().includes(texto) ||
+    emp.correo?.toLowerCase().includes(texto) ||
+    emp.nacionalidad?.toLowerCase().includes(texto) ||
+    emp.genero?.toLowerCase().includes(texto) ||
+    emp.estadoCivil?.toLowerCase().includes(texto)
+  );
+});
 
   const handleDescargar = (tipo, label) => {
     descargarArchivo(
@@ -62,7 +67,6 @@ function MisExpedientesPage() {
     );
   };
 
-  // VISTA: detalle del empleado seleccionado
   if (empleadoSeleccionado) {
     return (
       <div className="flex flex-col min-h-screen bg-gray-50">
@@ -72,34 +76,33 @@ function MisExpedientesPage() {
           <Sidebar />
           <main className="flex-1 p-6 pl-14">
 
-            {/* Encabezado pantalla — oculto al imprimir */}
             <div className="flex items-center gap-3 mb-6 no-imprimir">
               <button
                 onClick={() => setEmpleadoSeleccionado(null)}
-                className="text-gray-500 hover:text-gray-800 hover:bg-gray-100 p-2 rounded-lg transition-colors"
+                className="text-sm font-medium text-gray-700 hover:text-gray-800 hover:bg-gray-100 px-3 py-2 rounded-lg transition-colors"
               >
                 ← Volver
               </button>
               <div>
                 <h1 className="text-2xl font-bold text-gray-800">Expediente digital</h1>
                 <p className="text-gray-500 text-sm mt-0.5">
-                  {empleadoSeleccionado.nombre} {empleadoSeleccionado.apellido} — {empleadoSeleccionado.puesto}
+                  {empleadoSeleccionado.nombre} {empleadoSeleccionado.apellido}
                 </p>
               </div>
             </div>
 
-            {/* Tarjeta — solo esto se imprime */}
             <div id="expediente-imprimible" className="bg-white rounded-xl border border-gray-200 overflow-hidden max-w-2xl mb-6">
 
-              {/* Solo visible al imprimir */}
+              
               <div className="print-only text-center py-4 px-5 border-b border-gray-100">
                 <h2 className="text-lg font-bold text-gray-800">Deco Pastel Costa Rica</h2>
                 <p className="text-sm text-gray-500">Expediente digital</p>
                 <p className="text-xs text-gray-400 mt-1">
-                  {empleadoSeleccionado.nombre} {empleadoSeleccionado.apellido} — {empleadoSeleccionado.puesto}
+                  {empleadoSeleccionado.nombre} {empleadoSeleccionado.apellido}
                 </p>
               </div>
 
+              
               <div className="p-5 flex items-center gap-4 no-imprimir" style={{ background: '#FF33CC' }}>
                 <div className="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold text-white flex-shrink-0"
                   style={{ background: 'rgba(255,255,255,0.25)' }}>
@@ -109,10 +112,8 @@ function MisExpedientesPage() {
                   <p className="text-white font-semibold text-base">
                     {empleadoSeleccionado.nombre} {empleadoSeleccionado.apellido}
                   </p>
-                  <p className="text-white text-xs opacity-80 capitalize">{empleadoSeleccionado.puesto}</p>
                 </div>
               </div>
-
               <div className="p-5 border-b border-gray-100">
                 <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Datos personales</p>
                 <div className="grid grid-cols-2 gap-4">
@@ -135,6 +136,11 @@ function MisExpedientesPage() {
                   <div>
                     <p className="text-xs text-gray-400">Lugar de trabajo</p>
                     <p className="text-sm font-medium text-gray-700">{empleadoSeleccionado.lugarTrabajo || '—'}</p>
+                  </div>
+                  {/* ✅ NUEVO — Puesto */}
+                  <div>
+                    <p className="text-xs text-gray-400">Puesto</p>
+                    <p className="text-sm font-medium text-gray-700">{empleadoSeleccionado.puesto || '—'}</p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-400">Nacionalidad</p>
@@ -159,7 +165,7 @@ function MisExpedientesPage() {
                 </div>
               </div>
 
-              {/* Documentos — ocultos al imprimir */}
+              {/* Documentos */}
               <div className="p-5 border-b border-gray-100 no-imprimir">
                 <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Documentos adjuntos</p>
                 <div className="flex flex-col gap-2">
@@ -193,7 +199,7 @@ function MisExpedientesPage() {
                 </div>
               </div>
 
-              {/* Botones — ocultos al imprimir */}
+              {/* Botones */}
               <div className="p-4 flex gap-3 no-imprimir">
                 <button
                   onClick={() => navigate(`/expedientes/${empleadoSeleccionado.id}`)}
@@ -216,7 +222,6 @@ function MisExpedientesPage() {
               </div>
 
             </div>
-
           </main>
         </div>
       </div>
@@ -283,16 +288,10 @@ function MisExpedientesPage() {
                           </div>
                         </td>
                         <td className="px-4 py-3 text-gray-600">{emp.cedula}</td>
-                        <td className="px-4 py-3">
-                          <span className="bg-white text-gray-800 text-xs px-2 py-1 rounded-full font-medium">
-                            {emp.puesto}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3">
-                          <span className="bg-white text-gray-800 text-xs px-2 py-1 rounded-full font-medium">
-                            {emp.lugarTrabajo || '—'}
-                          </span>
-                        </td>
+                        <td className="px-4 py-3 text-gray-600">{emp.puesto}</td>
+                          
+                        <td className="px-4 py-3 text-gray-600">{emp.lugarTrabajo || '—'}</td>
+                          
                         <td className="px-4 py-3 text-gray-600">{formatearFecha(emp.fechaIngreso)}</td>
                         <td className="px-4 py-3">
                           <button

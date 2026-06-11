@@ -6,15 +6,20 @@ function TablaEmpleados({ empleados, onEditar, onEliminar }) {
   const [busqueda, setBusqueda] = useState('');
 
   const empleadosFiltrados = empleados.filter((emp) => {
-    const texto = busqueda.toLowerCase();
-    return (
-      emp.nombre?.toLowerCase().includes(texto) ||
-      emp.apellido?.toLowerCase().includes(texto) ||
-      emp.cedula?.toLowerCase().includes(texto) ||
-      emp.puesto?.toLowerCase().includes(texto) ||
-      emp.lugarTrabajo?.toLowerCase().includes(texto)  // ← también busca por lugar
-    );
-  });
+  const texto = busqueda.toLowerCase();
+  return (
+    emp.nombre?.toLowerCase().includes(texto) ||
+    emp.apellido?.toLowerCase().includes(texto) ||
+    emp.cedula?.toLowerCase().includes(texto) ||
+    emp.puesto?.toLowerCase().includes(texto) ||
+    emp.lugarTrabajo?.toLowerCase().includes(texto) ||
+    emp.telefono?.toLowerCase().includes(texto) ||
+    emp.correo?.toLowerCase().includes(texto) ||
+    emp.nacionalidad?.toLowerCase().includes(texto) ||
+    emp.genero?.toLowerCase().includes(texto) ||
+    emp.estadoCivil?.toLowerCase().includes(texto)
+  );
+});
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200">
@@ -28,7 +33,7 @@ function TablaEmpleados({ empleados, onEditar, onEliminar }) {
         </h2>
         <input
           type="text"
-          placeholder="Buscar por nombre, cédula, puesto o lugar..."
+          placeholder="Buscar"
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
           className="border border-gray-300 rounded-lg px-3 py-2 text-sm
@@ -75,16 +80,9 @@ function TablaEmpleados({ empleados, onEditar, onEliminar }) {
                   <td className="px-4 py-3 text-gray-600">{emp.cedula}</td>
                   <td className="px-4 py-3 text-gray-600">{emp.telefono}</td>
                   <td className="px-4 py-3 text-gray-600">{emp.correo}</td>
-                  <td className="px-4 py-3">
-                    <span className="bg-white text-gray-800 text-xs px-2 py-1 rounded-full font-medium">
-                    {emp.puesto}
-                   </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="bg-white text-gray-800 text-xs px-2 py-1 rounded-full font-medium">
-                    {emp.lugarTrabajo || '—'}
-                    </span>
-                  </td>
+                  <td className="px-4 py-3 text-gray-600">{emp.puesto}</td>
+                  <td className="px-4 py-3 text-gray-600">{emp.lugarTrabajo || '—'}</td>
+                    
                   <td className="px-4 py-3 text-gray-600">
                     {emp.fechaIngreso
                       ? new Date(emp.fechaIngreso).toLocaleDateString('es-CR')

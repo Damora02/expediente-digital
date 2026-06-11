@@ -22,7 +22,7 @@ function ExpedientesPage() {
   const [pdfActivo, setPdfActivo] = useState(null);
   const [subiendo, setSubiendo] = useState({});
 
-  const empleadoId = usuario?.rol === 'admin' ? id : usuario?.empleadoId;
+ const empleadoId = id;
 
   const estiloImpresion = `
     @media print {
@@ -109,15 +109,15 @@ function ExpedientesPage() {
           {/* Encabezado pantalla — oculto al imprimir */}
           <div className="flex items-center gap-3 mb-6 no-imprimir">
             <button
-              onClick={() => navigate(usuario?.rol === 'admin' ? '/empleados' : '/dashboard')}
-              className="text-gray-500 hover:text-gray-800 hover:bg-gray-100 p-2 rounded-lg transition-colors"
+               onClick={() => navigate('/dashboard')}
+              className="text-sm font-medium text-gray-700 hover:text-gray-800 hover:bg-gray-100 p-2 rounded-lg transition-colors"
             >
               ← Volver
             </button>
             <div>
               <h1 className="text-2xl font-bold text-gray-800">Expediente digital</h1>
               <p className="text-gray-500 text-sm mt-0.5">
-                {empleado?.nombre} {empleado?.apellido} - {empleado?.puesto}
+                {empleado?.nombre} {empleado?.apellido} 
               </p>
             </div>
           </div>
@@ -161,6 +161,10 @@ function ExpedientesPage() {
                   <p className="text-xs text-gray-400">Lugar de trabajo</p>
                   <p className="text-sm font-medium text-gray-700">{empleado?.lugarTrabajo || '-'}</p>
                 </div>
+                <div>
+               <p className="text-xs text-gray-400">Puesto</p>
+              <p className="text-sm font-medium text-gray-700">{empleado?.puesto || '-'}</p>
+              </div>
                 <div>
                   <p className="text-xs text-gray-400">Nacionalidad</p>
                   <p className="text-sm font-medium text-gray-700">{empleado?.nacionalidad || '-'}</p>
