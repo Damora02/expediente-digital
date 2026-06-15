@@ -11,6 +11,9 @@ const DOCUMENTOS = [
   { tipo: 'contrato', label: 'Contrato laboral', icono: '📋' },
   { tipo: 'entrevista', label: 'Entrevista', icono: '🗣️' },
   { tipo: 'cv', label: 'Curriculum vitae (CV)', icono: '📄' },
+  { tipo: 'cedula', label: 'Cédula', icono: '🪪' },
+  { tipo: 'titulo1', label: 'Título 1', icono: '🎓' },
+  { tipo: 'titulo2', label: 'Título 2', icono: '🎓' },
 ];
 
 function ExpedientesPage() {
@@ -22,7 +25,7 @@ function ExpedientesPage() {
   const [pdfActivo, setPdfActivo] = useState(null);
   const [subiendo, setSubiendo] = useState({});
 
- const empleadoId = id;
+  const empleadoId = id;
 
   const estiloImpresion = `
     @media print {
@@ -35,6 +38,14 @@ function ExpedientesPage() {
       .print-only { display: none !important; }
     }
   `;
+
+  // ✅ Función enmascarar IBAN
+ const enmascararIban = (iban) => {
+  if (!iban) return '—';
+  const limpio = iban.replace(/\s/g, '').toUpperCase();
+  return limpio.match(/.{1,4}/g)?.join(' ') || limpio;
+};
+     
 
   useEffect(() => {
     const cargar = async () => {
@@ -106,10 +117,9 @@ function ExpedientesPage() {
         <Sidebar />
         <main className="flex-1 p-6 pl-14">
 
-          {/* Encabezado pantalla — oculto al imprimir */}
           <div className="flex items-center gap-3 mb-6 no-imprimir">
             <button
-               onClick={() => navigate('/dashboard')}
+              onClick={() => navigate('/dashboard')}
               className="text-sm font-medium text-gray-700 hover:text-gray-800 hover:bg-gray-100 p-2 rounded-lg transition-colors"
             >
               ← Volver
@@ -117,20 +127,17 @@ function ExpedientesPage() {
             <div>
               <h1 className="text-2xl font-bold text-gray-800">Expediente digital</h1>
               <p className="text-gray-500 text-sm mt-0.5">
-                {empleado?.nombre} {empleado?.apellido} 
+                {empleado?.nombre} {empleado?.apellido}
               </p>
             </div>
           </div>
 
-          {/* Tarjeta de datos — solo esto se imprime */}
           <div id="expediente-imprimible" className="bg-white rounded-xl p-5 shadow-sm border border-gray-200 mb-6">
-
-            {/* Solo visible al imprimir */}
             <div className="print-only text-center mb-4">
               <h2 className="text-lg font-bold text-gray-800">Deco Pastel Costa Rica</h2>
               <p className="text-sm text-gray-500">Expediente digital</p>
               <p className="text-xs text-gray-400 mt-1">
-                {empleado?.nombre} {empleado?.apellido} — {empleado?.puesto}
+                {empleado?.nombre} {empleado?.apellido}
               </p>
             </div>
 
@@ -140,11 +147,17 @@ function ExpedientesPage() {
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 flex-1">
                 <div>
-                  <p className="text-xs text-gray-400">Cedula</p>
-                  <p className="text-sm font-medium text-gray-700">{empleado?.cedula || '-'}</p>
+                  <div className="flex flex-col"></div>
+                  <p className="text-xs text-gray-400">
+  {empleado?.tipoIdentificacion === 'extranjero' ? 'Núm. Extranjero' :
+   empleado?.tipoIdentificacion === 'pasaporte' ? 'Pasaporte' : 'Cédula'}
+</p>
+<p className="text-sm font-medium text-gray-700">
+  {empleado?.numeroIdentificacion || empleado?.cedula || '—'}
+</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-400">Telefono</p>
+                  <p className="text-xs text-gray-400">Teléfono</p>
                   <p className="text-sm font-medium text-gray-700">{empleado?.telefono || '-'}</p>
                 </div>
                 <div>
@@ -162,9 +175,9 @@ function ExpedientesPage() {
                   <p className="text-sm font-medium text-gray-700">{empleado?.lugarTrabajo || '-'}</p>
                 </div>
                 <div>
-               <p className="text-xs text-gray-400">Puesto</p>
-              <p className="text-sm font-medium text-gray-700">{empleado?.puesto || '-'}</p>
-              </div>
+                  <p className="text-xs text-gray-400">Puesto</p>
+                  <p className="text-sm font-medium text-gray-700">{empleado?.puesto || '-'}</p>
+                </div>
                 <div>
                   <p className="text-xs text-gray-400">Nacionalidad</p>
                   <p className="text-sm font-medium text-gray-700">{empleado?.nacionalidad || '-'}</p>
@@ -173,8 +186,6 @@ function ExpedientesPage() {
                   <p className="text-xs text-gray-400">Género</p>
                   <p className="text-sm font-medium text-gray-700">{empleado?.genero || '-'}</p>
                 </div>
-
-                {/* Solo visibles si tienen valor */}
                 {empleado?.edad && (
                   <div>
                     <p className="text-xs text-gray-400">Edad</p>
@@ -190,17 +201,18 @@ function ExpedientesPage() {
                 {empleado?.iban && (
                   <div className="col-span-2">
                     <p className="text-xs text-gray-400">IBAN</p>
-                    <p className="text-sm font-medium text-gray-700">{empleado.iban}</p>
+                    {/* ✅ CAMBIO — usar enmascararIban */}
+                    <p className="text-sm font-medium text-gray-700">{enmascararIban(empleado.iban)}</p>
                   </div>
                 )}
               </div>
             </div>
           </div>
 
-          {/* Documentos — ocultos al imprimir */}
           <div className="no-imprimir">
             <h2 className="font-semibold text-gray-700 mb-4">Documentos del expediente</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
               {DOCUMENTOS.map(({ tipo, label, icono }) => {
                 const archivo = obtenerArchivo(empleadoId, tipo);
                 const tieneArchivo = Boolean(archivo);
@@ -216,34 +228,24 @@ function ExpedientesPage() {
                       </div>
                     </div>
                     <div className="flex flex-col gap-2">
-                      <button
-                        onClick={() => handleVer(tipo)}
-                        disabled={!tieneArchivo}
-                        className="w-full text-sm bg-blue-50 text-blue-700 hover:bg-blue-100 py-2 rounded-lg border border-blue-200 transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-medium"
-                      >
+                      <button onClick={() => handleVer(tipo)} disabled={!tieneArchivo}
+                        className="w-full text-sm bg-blue-50 text-blue-700 hover:bg-blue-100 py-2 rounded-lg border border-blue-200 transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-medium">
                         👁️ Visualizar
                       </button>
-                      <button
-                        onClick={() => handleDescargar(tipo, label)}
-                        disabled={!tieneArchivo}
-                        className="w-full text-sm bg-green-50 text-green-700 hover:bg-green-100 py-2 rounded-lg border border-green-200 transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-medium"
-                      >
+                      <button onClick={() => handleDescargar(tipo, label)} disabled={!tieneArchivo}
+                        className="w-full text-sm bg-green-50 text-green-700 hover:bg-green-100 py-2 rounded-lg border border-green-200 transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-medium">
                         ⬇️ Descargar
                       </button>
                       <label className={`w-full text-sm text-center cursor-pointer py-2 rounded-lg transition-colors font-medium ${subiendo[tipo] ? 'bg-gray-50 text-gray-400 cursor-not-allowed' : 'bg-yellow-50 text-yellow-700 hover:bg-yellow-100 border border-yellow-200'}`}>
                         {subiendo[tipo] ? 'Subiendo...' : tieneArchivo ? '🔄 Reemplazar' : '⬆️ Cargar archivo'}
-                        <input
-                          type="file"
-                          accept="application/pdf"
-                          className="hidden"
-                          disabled={subiendo[tipo]}
-                          onChange={(e) => handleSubir(e, tipo)}
-                        />
+                        <input type="file" accept="application/pdf" className="hidden"
+                          disabled={subiendo[tipo]} onChange={(e) => handleSubir(e, tipo)} />
                       </label>
                     </div>
                   </div>
                 );
               })}
+
             </div>
           </div>
 

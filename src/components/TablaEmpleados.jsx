@@ -5,11 +5,14 @@ function TablaEmpleados({ empleados, onEditar, onEliminar }) {
   const navigate = useNavigate();
   const [busqueda, setBusqueda] = useState('');
 
-  const empleadosFiltrados = empleados.filter((emp) => {
+ const empleadosFiltrados = empleados.filter((emp) => {
   const texto = busqueda.toLowerCase();
+  const textoSinGuiones = texto.replace(/\D/g, '');
   return (
     emp.nombre?.toLowerCase().includes(texto) ||
     emp.apellido?.toLowerCase().includes(texto) ||
+    emp.numeroIdentificacion?.toLowerCase().includes(texto) ||
+    emp.numeroIdentificacion?.replace(/\D/g, '').includes(textoSinGuiones) ||
     emp.cedula?.toLowerCase().includes(texto) ||
     emp.puesto?.toLowerCase().includes(texto) ||
     emp.lugarTrabajo?.toLowerCase().includes(texto) ||
@@ -20,7 +23,6 @@ function TablaEmpleados({ empleados, onEditar, onEliminar }) {
     emp.estadoCivil?.toLowerCase().includes(texto)
   );
 });
-
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200">
 
@@ -77,7 +79,10 @@ function TablaEmpleados({ empleados, onEditar, onEliminar }) {
                       </p>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-gray-600">{emp.cedula}</td>
+                
+                  <td className="px-4 py-3 text-gray-600">
+  {emp.numeroIdentificacion || emp.cedula || '—'}
+</td>
                   <td className="px-4 py-3 text-gray-600">{emp.telefono}</td>
                   <td className="px-4 py-3 text-gray-600">{emp.correo}</td>
                   <td className="px-4 py-3 text-gray-600">{emp.puesto}</td>

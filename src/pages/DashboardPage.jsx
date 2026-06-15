@@ -33,11 +33,15 @@ function DashboardPage() {
     return new Date(fecha).toLocaleDateString('es-CR');
   };
 
-  const empleadosFiltrados = empleados.filter((emp) => {
+ const empleadosFiltrados = empleados.filter((emp) => {
+  if (!busqueda.trim()) return true; // ← si no hay búsqueda muestra todos
   const texto = busqueda.toLowerCase();
+  const textoSinGuiones = texto.replace(/\D/g, '');
   return (
     emp.nombre?.toLowerCase().includes(texto) ||
     emp.apellido?.toLowerCase().includes(texto) ||
+    emp.numeroIdentificacion?.toLowerCase().includes(texto) ||
+    (textoSinGuiones && emp.numeroIdentificacion?.replace(/\D/g, '').includes(textoSinGuiones)) ||
     emp.cedula?.toLowerCase().includes(texto) ||
     emp.puesto?.toLowerCase().includes(texto) ||
     emp.lugarTrabajo?.toLowerCase().includes(texto) ||
@@ -56,7 +60,7 @@ function DashboardPage() {
         <Sidebar />
         <main className="flex-1 p-6 pl-14">
 
-          {/* Bienvenida */}
+         {/* Bienvenida */}
           <div className="flex flex-col items-center text-center mb-8">
             <h1 className="text-3xl font-bold text-gray-800">
               Bienvenido, {usuario?.usuario}!
@@ -70,40 +74,46 @@ function DashboardPage() {
             </span>
           </div>
 
-          {/* ADMIN: estadísticas */}
-          {esAdmin && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <div className="bg-white rounded-xl p-5 border border-gray-200 flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-500">Total empleados</p>
-                  <p className="text-3xl font-bold mt-1" style={{ color: '#FF33CC' }}>
-                    {cargando ? '...' : empleados.length}
-                  </p>
-                </div>
-                <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: '#FF33CC15' }}>
-                  <span className="text-2xl">👥</span>
-                </div>
-              </div>
-              <div className="bg-white rounded-xl p-5 border border-gray-200 flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-500">Módulos activos</p>
-                  <p className="text-3xl font-bold mt-1" style={{ color: '#00BFFF' }}>3</p>
-                </div>
-                <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: '#00BFFF15' }}>
-                  <span className="text-2xl">⚙️</span>
-                </div>
-              </div>
-              <div className="bg-white rounded-xl p-5 border border-gray-200 flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-500">Rol actual</p>
-                  <p className="text-xl font-bold mt-1 capitalize" style={{ color: '#7c3aed' }}>{usuario?.rol}</p>
-                </div>
-                <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: '#f5f3ff' }}>
-                  <span className="text-2xl">🔐</span>
-                </div>
-              </div>
-            </div>
-          )}
+         {/* ADMIN: estadísticas */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+
+  {/* Total empleados */}
+  <div className="bg-white rounded-xl p-5 border border-gray-200 flex items-center justify-between">
+    <div>
+      <p className="text-sm text-gray-500">Total empleados</p>
+      <p className="text-3xl font-bold mt-1 text-gray-900">
+        {cargando ? '...' : empleados.length}
+      </p>
+    </div>
+    <div className="w-11 h-11 rounded-xl flex items-center justify-center bg-gray-100">
+      <span className="text-2xl">👥</span>
+    </div>
+  </div>
+
+  {/* Módulos activos */}
+  <div className="bg-white rounded-xl p-5 border border-gray-200 flex items-center justify-between">
+    <div>
+      <p className="text-sm text-gray-500">Módulos activos</p>
+      <p className="text-3xl font-bold mt-1 text-gray-900">3</p>
+    </div>
+    <div className="w-11 h-11 rounded-xl flex items-center justify-center bg-gray-100">
+      <span className="text-2xl">⚙️</span>
+    </div>
+  </div>
+
+  {/* Rol actual */}
+  <div className="bg-white rounded-xl p-5 border border-gray-200 flex items-center justify-between">
+    <div>
+      <p className="text-sm text-gray-500">Rol actual</p>
+      <p className="text-xl font-bold mt-1 capitalize text-gray-900">{usuario?.rol}</p>
+    </div>
+    <div className="w-11 h-11 rounded-xl flex items-center justify-center bg-gray-100">
+      <span className="text-2xl">🔐</span>
+    </div>
+  </div>
+
+</div>
+
 
           {/* LISTA DE EMPLEADOS */}
           <div className="bg-white rounded-xl border border-gray-200 mb-6 overflow-hidden">
@@ -152,10 +162,11 @@ function DashboardPage() {
                             </div>
                             <p className="font-medium text-gray-800">{emp.nombre} {emp.apellido}</p>
                           </div>
-                        </td>
-                        <td className="px-4 py-3 text-gray-600">{emp.cedula}</td>
-                        <td className="px-4 py-3 text-gray-600">{emp.puesto}</td>
-                          
+                           </td>
+  <td className="px-4 py-3 text-gray-600">
+  {emp.numeroIdentificacion || emp.cedula || '—'}
+</td>
+<td className="px-4 py-3 text-gray-600">{emp.puesto}</td>
                         <td className="px-4 py-3 text-gray-600">{emp.lugarTrabajo || '—'}</td>
                         <td className="px-4 py-3 text-gray-600">{formatearFecha(emp.fechaIngreso)}</td>
                         <td className="px-4 py-3">

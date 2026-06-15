@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react';
 const VACIO = {
   nombre: '',
   apellido: '',
-  cedula: '',
+  tipoIdentificacion: 'nacional',  
+  numeroIdentificacion: '',         
   telefono: '',
   correo: '',
   puesto: '',
@@ -11,7 +12,7 @@ const VACIO = {
   lugarTrabajo: '',
   nacionalidad: '',
   genero: '',
-  edad: '',
+  fechaNacimiento:'',
   estadoCivil: '',
   iban: '',
 };
@@ -72,7 +73,32 @@ function FormularioEmpleado({ datosIniciales, onGuardar, cargando }) {
     contrato: null,
     entrevista: null,
     cv: null,
-  });
+    cedula: null,   // ← nuevo
+    titulo1: null,  // ← nuevo
+    titulo2: null,  // ← nuevo
+   });  
+
+    const CONFIG_IDENTIFICACION = {
+    nacional: {
+      placeholder: '1-1234-5678',
+      maxLength: 11,
+      pattern: /^\d-\d{4}-\d{4}$/,
+      mensaje: 'Formato inválido. Ej: 1-1234-5678',
+    },
+    extranjero: {
+      placeholder: '123456789012',
+      maxLength: 12,
+      pattern: /^\d{10,12}$/,
+      mensaje: 'Debe tener entre 10 y 12 dígitos',
+    },
+    pasaporte: {
+      placeholder: 'A1234567',
+      maxLength: 9,
+      pattern: /^[A-Z0-9]{6,9}$/,
+      mensaje: 'Entre 6 y 9 caracteres alfanuméricos',
+    },
+  
+  };
   const [errores, setErrores] = useState({});
 
   useEffect(() => {
@@ -80,7 +106,8 @@ function FormularioEmpleado({ datosIniciales, onGuardar, cargando }) {
       setForm({
         nombre:       datosIniciales.nombre       || '',
         apellido:     datosIniciales.apellido     || '',
-        cedula:       datosIniciales.cedula       || '',
+        tipoIdentificacion:   datosIniciales.tipoIdentificacion   || 'nacional',
+        numeroIdentificacion: datosIniciales.numeroIdentificacion || '',       
         telefono:     datosIniciales.telefono     || '',
         correo:       datosIniciales.correo       || '',
         puesto:       datosIniciales.puesto       || '',
@@ -88,7 +115,7 @@ function FormularioEmpleado({ datosIniciales, onGuardar, cargando }) {
         lugarTrabajo: datosIniciales.lugarTrabajo || '',
         nacionalidad: datosIniciales.nacionalidad || '',
         genero:       datosIniciales.genero       || '',
-        edad:         datosIniciales.edad         || '',
+        fechaNacimiento: datosIniciales.fechaNacimiento       || '',
         estadoCivil:  datosIniciales.estadoCivil  || '',
         iban:         datosIniciales.iban         || '',
       });
@@ -118,12 +145,37 @@ function FormularioEmpleado({ datosIniciales, onGuardar, cargando }) {
     }
     setArchivos((prev) => ({ ...prev, [tipo]: archivo }));
   };
+  const calcularEdad = (fechaNacimiento) => {
+  if (!fechaNacimiento) return '';
+  const hoy = new Date();
+  const nacimiento = new Date(fechaNacimiento);
+  let edad = hoy.getFullYear() - nacimiento.getFullYear();
+  const mes = hoy.getMonth() - nacimiento.getMonth();
+  if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+    edad--;
+  }
+  return edad;
+  };
+  const formatearCedula = (valor) => {
+  const soloNumeros = valor.replace(/\D/g, '');
+  if (soloNumeros.length <= 1) return soloNumeros;
+  if (soloNumeros.length <= 5) return `${soloNumeros[0]}-${soloNumeros.slice(1)}`;
+  return `${soloNumeros[0]}-${soloNumeros.slice(1, 5)}-${soloNumeros.slice(5, 9)}`;
+
+};
 
   const validar = () => {
     const nuevosErrores = {};
     if (!form.nombre.trim())       nuevosErrores.nombre       = 'El nombre es requerido';
     if (!form.apellido.trim())     nuevosErrores.apellido     = 'El apellido es requerido';
-    if (!form.cedula.trim())       nuevosErrores.cedula       = 'La cedula es requerida';
+    if (!form.numeroIdentificacion.trim()) {
+  nuevosErrores.numeroIdentificacion = 'El número de identificación es requerido';
+} else {
+  const config = CONFIG_IDENTIFICACION[form.tipoIdentificacion];
+  if (!config.pattern.test(form.numeroIdentificacion)) {
+    nuevosErrores.numeroIdentificacion = config.mensaje;
+  }
+}
     if (!form.telefono.trim())     nuevosErrores.telefono     = 'El telefono es requerido';
     if (!form.correo.trim())       nuevosErrores.correo       = 'El correo es requerido';
     if (!form.puesto.trim())       nuevosErrores.puesto       = 'El puesto es requerido';
@@ -138,17 +190,22 @@ function FormularioEmpleado({ datosIniciales, onGuardar, cargando }) {
       nuevosErrores.iban = 'Formato inválido. Debe ser CR seguido de 20 dígitos';
     }
     // Validar edad solo si fue ingresada
-    if (form.edad && (isNaN(form.edad) || form.edad < 18 || form.edad > 99)) {
-      nuevosErrores.edad = 'Ingrese una edad válida entre 18 y 99';
+     {
+  const edad = calcularEdad(form.fechaNacimiento);
+  if (edad < 18) nuevosErrores.fechaNacimiento = 'El empleado debe ser mayor de 18 años';
+  if (edad > 99) nuevosErrores.fechaNacimiento = 'Fecha de nacimiento inválida';
+
     }
     setErrores(nuevosErrores);
     return Object.keys(nuevosErrores).length === 0;
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!validar()) return;
-    onGuardar(form, archivos);
+  e.preventDefault();
+  if (!validar()) return;
+  const edad = calcularEdad(form.fechaNacimiento);
+  onGuardar({ ...form, edad }, archivos);
+
   };
 
   return (
@@ -160,13 +217,108 @@ function FormularioEmpleado({ datosIniciales, onGuardar, cargando }) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Campo label="Nombre"             name="nombre"       value={form.nombre}       onChange={handleChange} disabled={cargando} error={errores.nombre} />
           <Campo label="Apellido"           name="apellido"     value={form.apellido}     onChange={handleChange} disabled={cargando} error={errores.apellido} />
-          <Campo label="Cedula"             name="cedula"       value={form.cedula}       onChange={handleChange} disabled={cargando} error={errores.cedula} />
+          <div className="md:col-span-2">
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    Identificación <span className="text-red-500">*</span>
+  </label>
+  <div className="flex gap-2">
+    <select
+      name="tipoIdentificacion"
+      value={form.tipoIdentificacion}
+      onChange={(e) => {
+        setForm(prev => ({
+          ...prev,
+          tipoIdentificacion: e.target.value,
+          numeroIdentificacion: ''
+        }));
+        setErrores(prev => ({ ...prev, numeroIdentificacion: '' }));
+      }}
+      disabled={cargando}
+      className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+    >
+      <option value="nacional">Cédula Nacional</option>
+      <option value="extranjero">Núm. Extranjero</option>
+      <option value="pasaporte">Pasaporte</option>
+    </select>
+
+    <input
+      type="text"
+      name="numeroIdentificacion"
+      value={form.numeroIdentificacion}
+      onChange={(e) => {
+    let valor = e.target.value;
+    if (form.tipoIdentificacion === 'nacional') {
+      valor = formatearCedula(valor);
+    }
+    setForm(prev => ({ ...prev, numeroIdentificacion: valor }));
+    if (errores.numeroIdentificacion) {
+      setErrores(prev => ({ ...prev, numeroIdentificacion: '' }));
+    }
+  }}
+      disabled={cargando}
+      placeholder={CONFIG_IDENTIFICACION[form.tipoIdentificacion].placeholder}
+      maxLength={CONFIG_IDENTIFICACION[form.tipoIdentificacion].maxLength}
+      className={`flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50 transition ${
+        errores.numeroIdentificacion ? 'border-red-400 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
+      }`}
+    />
+  </div>
+  {errores.numeroIdentificacion
+    ? <p className="text-red-500 text-xs mt-1">{errores.numeroIdentificacion}</p>
+    : <p className="text-gray-400 text-xs mt-1">
+        Formato: {CONFIG_IDENTIFICACION[form.tipoIdentificacion].placeholder}
+      </p>
+  }
+</div>
           <Campo label="Telefono"           name="telefono"     value={form.telefono}     onChange={handleChange} disabled={cargando} error={errores.telefono} />
           <Campo label="Correo electronico" name="correo"       value={form.correo}       onChange={handleChange} disabled={cargando} error={errores.correo} type="email" />
           <Campo label="Puesto"             name="puesto"       value={form.puesto}       onChange={handleChange} disabled={cargando} error={errores.puesto} />
           <Campo label="Fecha de ingreso"   name="fechaIngreso" value={form.fechaIngreso} onChange={handleChange} disabled={cargando} error={errores.fechaIngreso} type="date" />
           <Campo label="Lugar de trabajo"   name="lugarTrabajo" value={form.lugarTrabajo} onChange={handleChange} disabled={cargando} error={errores.lugarTrabajo} />
-          <Campo label="Nacionalidad"       name="nacionalidad" value={form.nacionalidad} onChange={handleChange} disabled={cargando} error={errores.nacionalidad} />
+         <div>
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    Nacionalidad <span className="text-red-500">*</span>
+  </label>
+  <select
+    name="nacionalidad"
+    value={form.nacionalidad}
+    onChange={handleChange}
+    disabled={cargando}
+    className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50 disabled:cursor-not-allowed transition ${errores.nacionalidad ? 'border-red-400 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'}`}
+  >
+    <option value="">Seleccione...</option>
+    <optgroup label="Centroamérica">
+      <option>Costa Rica</option>
+      <option>Guatemala</option>
+      <option>Hondureña</option>
+      <option>Salvador</option>
+      <option>Nicaragüense</option>
+      <option>Panama</option>
+      <option>Beliceña</option>
+    </optgroup>
+    <optgroup label="América del Sur">
+      <option>Colombia</option>
+      <option>Venezuela</option>
+      <option>Peru</option>
+      <option>Ecuador</option>
+      <option>Chile</option>
+      <option>Argentina</option>
+      <option>Bolivia</option>
+    </optgroup>
+    <optgroup label="América del Norte">
+      <option>Mexicana</option>
+      <option>Estadounidense</option>
+      <option>Canadiense</option>
+    </optgroup>
+    <optgroup label="Europa">
+      <option>Española</option>
+      <option>Italiana</option>
+      <option>Alemana</option>
+      <option>Francesa</option>
+    </optgroup>
+  </select>
+  {errores.nacionalidad && <p className="text-red-500 text-xs mt-1">{errores.nacionalidad}</p>}
+</div>
 
           {/* Género */}
           <div>
@@ -188,16 +340,23 @@ function FormularioEmpleado({ datosIniciales, onGuardar, cargando }) {
           </div>
 
           {/* Edad — opcional */}
-          <Campo
-            label="Edad"
-            name="edad"
-            value={form.edad}
-            onChange={handleChange}
-            disabled={cargando}
-            error={errores.edad}
-            type="number"
-            requerido={false}
-          />
+          <div>
+  <Campo
+    label="Fecha de Nacimiento"
+    name="fechaNacimiento"
+    value={form.fechaNacimiento}
+    onChange={handleChange}
+    disabled={cargando}
+    error={errores.fechaNacimiento}
+    type="date"
+    requerido={false}
+  />
+  {form.fechaNacimiento && (
+    <p className="text-xs text-blue-600 mt-1">
+      🎂 Edad: {calcularEdad(form.fechaNacimiento)} años
+    </p>
+  )}
+</div>
 
           {/* Estado civil — opcional, cambia según género */}
           <div>
@@ -244,10 +403,13 @@ function FormularioEmpleado({ datosIniciales, onGuardar, cargando }) {
         <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4 pb-2 border-b">
           Documentos adjuntos
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <CampoPDF label="Contrato laboral"      tipo="contrato"   nombreActual={datosIniciales?.contrato}   archivo={archivos.contrato}   onChange={(e) => handleArchivo(e, 'contrato')}   disabled={cargando} />
           <CampoPDF label="Entrevista"             tipo="entrevista" nombreActual={datosIniciales?.entrevista} archivo={archivos.entrevista} onChange={(e) => handleArchivo(e, 'entrevista')} disabled={cargando} />
           <CampoPDF label="Curriculum vitae (CV)"  tipo="cv"         nombreActual={datosIniciales?.cv}         archivo={archivos.cv}         onChange={(e) => handleArchivo(e, 'cv')}         disabled={cargando} />
+          <CampoPDF label="Cédula"   tipo="cedula"  nombreActual={datosIniciales?.cedula}  archivo={archivos.cedula}  onChange={(e) => handleArchivo(e, 'cedula')}  disabled={cargando} />
+          <CampoPDF label="Título 1" tipo="titulo1" nombreActual={datosIniciales?.titulo1} archivo={archivos.titulo1} onChange={(e) => handleArchivo(e, 'titulo1')} disabled={cargando} />
+          <CampoPDF label="Título 2" tipo="titulo2" nombreActual={datosIniciales?.titulo2} archivo={archivos.titulo2} onChange={(e) => handleArchivo(e, 'titulo2')} disabled={cargando} />
         </div>
       </div>
 

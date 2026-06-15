@@ -43,21 +43,31 @@ function MisExpedientesPage() {
     return new Date(fecha).toLocaleDateString('es-CR');
   };
 
+  const enmascararIban = (iban) => {
+    if (!iban) return '—';
+    const limpio = iban.replace(/\s/g, '').toUpperCase();
+    return limpio.match(/.{1,4}/g)?.join(' ') || limpio;
+  };
+
   const empleadosFiltrados = empleados.filter((emp) => {
-  const texto = busqueda.toLowerCase();
-  return (
-    emp.nombre?.toLowerCase().includes(texto) ||
-    emp.apellido?.toLowerCase().includes(texto) ||
-    emp.cedula?.toLowerCase().includes(texto) ||
-    emp.puesto?.toLowerCase().includes(texto) ||
-    emp.lugarTrabajo?.toLowerCase().includes(texto) ||
-    emp.telefono?.toLowerCase().includes(texto) ||
-    emp.correo?.toLowerCase().includes(texto) ||
-    emp.nacionalidad?.toLowerCase().includes(texto) ||
-    emp.genero?.toLowerCase().includes(texto) ||
-    emp.estadoCivil?.toLowerCase().includes(texto)
-  );
-});
+    if (!busqueda.trim()) return true;
+    const texto = busqueda.toLowerCase();
+    const textoSinGuiones = texto.replace(/\D/g, '');
+    return (
+      emp.nombre?.toLowerCase().includes(texto) ||
+      emp.apellido?.toLowerCase().includes(texto) ||
+      emp.numeroIdentificacion?.toLowerCase().includes(texto) ||
+      (textoSinGuiones && emp.numeroIdentificacion?.replace(/\D/g, '').includes(textoSinGuiones)) ||
+      emp.cedula?.toLowerCase().includes(texto) ||
+      emp.puesto?.toLowerCase().includes(texto) ||
+      emp.lugarTrabajo?.toLowerCase().includes(texto) ||
+      emp.telefono?.toLowerCase().includes(texto) ||
+      emp.correo?.toLowerCase().includes(texto) ||
+      emp.nacionalidad?.toLowerCase().includes(texto) ||
+      emp.genero?.toLowerCase().includes(texto) ||
+      emp.estadoCivil?.toLowerCase().includes(texto)
+    );
+  });
 
   const handleDescargar = (tipo, label) => {
     descargarArchivo(
@@ -93,7 +103,6 @@ function MisExpedientesPage() {
 
             <div id="expediente-imprimible" className="bg-white rounded-xl border border-gray-200 overflow-hidden max-w-2xl mb-6">
 
-              
               <div className="print-only text-center py-4 px-5 border-b border-gray-100">
                 <h2 className="text-lg font-bold text-gray-800">Deco Pastel Costa Rica</h2>
                 <p className="text-sm text-gray-500">Expediente digital</p>
@@ -102,7 +111,6 @@ function MisExpedientesPage() {
                 </p>
               </div>
 
-              
               <div className="p-5 flex items-center gap-4 no-imprimir" style={{ background: '#FF33CC' }}>
                 <div className="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold text-white flex-shrink-0"
                   style={{ background: 'rgba(255,255,255,0.25)' }}>
@@ -114,12 +122,19 @@ function MisExpedientesPage() {
                   </p>
                 </div>
               </div>
+
+              {/* Datos personales */}
               <div className="p-5 border-b border-gray-100">
                 <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Datos personales</p>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-xs text-gray-400">Cédula</p>
-                    <p className="text-sm font-medium text-gray-700">{empleadoSeleccionado.cedula || '—'}</p>
+                    <p className="text-xs text-gray-400">
+                      {empleadoSeleccionado.tipoIdentificacion === 'extranjero' ? 'Núm. Extranjero' :
+                       empleadoSeleccionado.tipoIdentificacion === 'pasaporte' ? 'Pasaporte' : 'Cédula'}
+                    </p>
+                    <p className="text-sm font-medium text-gray-700">
+                      {empleadoSeleccionado.numeroIdentificacion || empleadoSeleccionado.cedula || '—'}
+                    </p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-400">Teléfono</p>
@@ -137,7 +152,6 @@ function MisExpedientesPage() {
                     <p className="text-xs text-gray-400">Lugar de trabajo</p>
                     <p className="text-sm font-medium text-gray-700">{empleadoSeleccionado.lugarTrabajo || '—'}</p>
                   </div>
-                  {/* ✅ NUEVO — Puesto */}
                   <div>
                     <p className="text-xs text-gray-400">Puesto</p>
                     <p className="text-sm font-medium text-gray-700">{empleadoSeleccionado.puesto || '—'}</p>
@@ -160,7 +174,7 @@ function MisExpedientesPage() {
                   </div>
                   <div className="col-span-2">
                     <p className="text-xs text-gray-400">IBAN</p>
-                    <p className="text-sm font-medium text-gray-700">{empleadoSeleccionado.iban || '—'}</p>
+                    <p className="text-sm font-medium text-gray-700">{enmascararIban(empleadoSeleccionado.iban)}</p>
                   </div>
                 </div>
               </div>
@@ -173,6 +187,7 @@ function MisExpedientesPage() {
                     { label: 'Contrato laboral', tipo: 'contrato' },
                     { label: 'Entrevista', tipo: 'entrevista' },
                     { label: 'Curriculum (CV)', tipo: 'cv' },
+                    { label: 'Cédula', tipo: 'cedula' },
                   ].map((doc) => {
                     const archivo = obtenerArchivo(empleadoSeleccionado.id, doc.tipo);
                     return (
@@ -199,7 +214,6 @@ function MisExpedientesPage() {
                 </div>
               </div>
 
-              {/* Botones */}
               <div className="p-4 flex gap-3 no-imprimir">
                 <button
                   onClick={() => navigate(`/expedientes/${empleadoSeleccionado.id}`)}
@@ -228,7 +242,6 @@ function MisExpedientesPage() {
     );
   }
 
-  // VISTA: lista de empleados
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar />
@@ -251,7 +264,7 @@ function MisExpedientesPage() {
               </h2>
               <input
                 type="text"
-                placeholder="Buscar por nombre, cédula o puesto..."
+                placeholder="Buscar..."
                 value={busqueda}
                 onChange={(e) => setBusqueda(e.target.value)}
                 className="border border-gray-300 rounded-lg px-3 py-2 text-sm w-64 focus:outline-none focus:ring-2 focus:ring-pink-400"
@@ -287,11 +300,11 @@ function MisExpedientesPage() {
                             <p className="font-medium text-gray-800">{emp.nombre} {emp.apellido}</p>
                           </div>
                         </td>
-                        <td className="px-4 py-3 text-gray-600">{emp.cedula}</td>
+                        <td className="px-4 py-3 text-gray-600">
+                          {emp.numeroIdentificacion || emp.cedula || '—'}
+                        </td>
                         <td className="px-4 py-3 text-gray-600">{emp.puesto}</td>
-                          
                         <td className="px-4 py-3 text-gray-600">{emp.lugarTrabajo || '—'}</td>
-                          
                         <td className="px-4 py-3 text-gray-600">{formatearFecha(emp.fechaIngreso)}</td>
                         <td className="px-4 py-3">
                           <button
