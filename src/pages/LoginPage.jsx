@@ -37,7 +37,7 @@ function LoginPage() {
         setError('Usuario o contrasena incorrectos');
       }
     } catch (err) {
-      setError('Error de conexion. Verifique que json-server este corriendo en el puerto 3001.');
+       setError(err.message || 'Error de conexion. Verifique que el servidor este corriendo en el puerto 3001.');
     } finally {
       setCargando(false);
     }
@@ -124,21 +124,7 @@ function LoginPage() {
           </button>
         </form>
 
-        <div className="mt-6 p-4 rounded-lg border"
-          style={{ background: '#FF33CC11', borderColor: '#FF33CC33' }}>
-          <p className="text-xs font-semibold mb-2" style={{ color: '#FF33CC' }}>
-            Credenciales de prueba:
-          </p>
-          <div className="space-y-1">
-            <p className="text-xs" style={{ color: '#cc00a3' }}>
-              <span className="font-medium">Admin:</span> admin / 1234
-            </p>
-            <p className="text-xs" style={{ color: '#cc00a3' }}>
-              <span className="font-medium">Usuario:</span> empleado1 / 1234
-            </p>
-          </div>
-        </div>
-
+       
       </div>
     </div>
   );
