@@ -4,7 +4,7 @@ import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import VisorPDF from '../components/VisorPDF';
 import { getEmpleadoPorId } from '../services/empleadoService';
-import { obtenerArchivo, subirArchivo, descargarArchivo } from '../services/expedienteService';
+import { listarDocumentos, subirArchivo, descargarArchivo, obtenerUrlArchivo } from '../services/expedienteService';
 import { useAuth } from '../context/AuthContext';
 
 const DOCUMENTOS = [
@@ -24,6 +24,7 @@ function ExpedientesPage() {
   const [cargando, setCargando] = useState(true);
   const [pdfActivo, setPdfActivo] = useState(null);
   const [subiendo, setSubiendo] = useState({});
+  const [documentos, setDocumentos] = useState([]);
 
   const empleadoId = id;
 
@@ -47,52 +48,63 @@ function ExpedientesPage() {
 };
      
 
-  useEffect(() => {
-    const cargar = async () => {
-      try {
-        const datos = await getEmpleadoPorId(empleadoId);
-        setEmpleado(datos);
-      } catch (err) {
-        alert('No se pudo cargar el expediente.');
-        navigate(usuario?.rol === 'admin' ? '/empleados' : '/dashboard');
-      } finally {
-        setCargando(false);
-      }
-    };
-    if (empleadoId) cargar();
-  }, [empleadoId, navigate, usuario?.rol]);
+  const cargarDocumentos = async () => {
+  const docs = await listarDocumentos(empleadoId);
+  setDocumentos(docs);
+};
 
-  const handleVer = (tipo) => {
-    const archivo = obtenerArchivo(empleadoId, tipo);
-    if (!archivo) {
-      alert('No hay archivo disponible para este documento.');
-      return;
+
+
+useEffect(() => {
+  const cargar = async () => {
+    try {
+      const datos = await getEmpleadoPorId(empleadoId);
+      setEmpleado(datos);
+      await cargarDocumentos();
+    } catch (err) {
+      alert('No se pudo cargar el expediente.');
+      navigate(usuario?.rol === 'admin' ? '/empleados' : '/dashboard');
+    } finally {
+      setCargando(false);
     }
-    setPdfActivo({ base64: archivo.base64, nombre: archivo.nombre });
   };
+  if (empleadoId) cargar();
+// eslint-disable-next-line react-hooks/exhaustive-deps
+}, [empleadoId, navigate, usuario?.rol]);
+const buscarDocumento = (tipo) => documentos.find((d) => d.tipo === tipo);
+  const handleVer = (tipo) => {
+  const archivo = buscarDocumento(tipo);
+  if (!archivo) {
+    alert('No hay archivo disponible para este documento.');
+    return;
+  }
+  setPdfActivo({ url: obtenerUrlArchivo(empleadoId, tipo), nombre: archivo.nombre_original });
+};
 
   const handleDescargar = (tipo, label) => {
     descargarArchivo(empleadoId, tipo, `${label}_${empleado?.nombre}_${empleado?.apellido}.pdf`);
   };
 
-  const handleSubir = async (e, tipo) => {
-    const archivo = e.target.files[0];
-    if (!archivo) return;
-    if (archivo.type !== 'application/pdf') {
-      alert('Solo se permiten archivos PDF');
-      e.target.value = '';
-      return;
-    }
-    setSubiendo((prev) => ({ ...prev, [tipo]: true }));
-    try {
-      await subirArchivo(empleadoId, tipo, archivo);
-      alert('Archivo subido correctamente');
-    } catch (err) {
-      alert('Error al subir el archivo.');
-    } finally {
-      setSubiendo((prev) => ({ ...prev, [tipo]: false }));
-      e.target.value = '';
-    }
+ const handleSubir = async (e, tipo) => {
+  const archivo = e.target.files[0];
+  if (!archivo) return;
+  if (archivo.type !== 'application/pdf') {
+    alert('Solo se permiten archivos PDF');
+    e.target.value = '';
+    return;
+  }
+  setSubiendo((prev) => ({ ...prev, [tipo]: true }));
+  try {
+    await subirArchivo(empleadoId, tipo, archivo);
+    await cargarDocumentos();
+    alert('Archivo subido correctamente');
+  } catch (err) {
+    alert('Error al subir el archivo.');
+  } finally {
+    setSubiendo((prev) => ({ ...prev, [tipo]: false }));
+    e.target.value = '';
+  }
+
   };
 
   if (cargando) {
@@ -214,8 +226,8 @@ function ExpedientesPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
               {DOCUMENTOS.map(({ tipo, label, icono }) => {
-                const archivo = obtenerArchivo(empleadoId, tipo);
-                const tieneArchivo = Boolean(archivo);
+  const archivo = buscarDocumento(tipo);
+  const tieneArchivo = Boolean(archivo);
                 return (
                   <div key={tipo} className="bg-white rounded-xl p-5 shadow-sm border border-gray-200 flex flex-col gap-4">
                     <div className="flex items-center gap-3">
@@ -223,7 +235,7 @@ function ExpedientesPage() {
                       <div>
                         <p className="font-semibold text-gray-800 text-sm">{label}</p>
                         <p className={`text-xs mt-0.5 ${tieneArchivo ? 'text-green-600' : 'text-gray-400'}`}>
-                          {tieneArchivo ? archivo.nombre : 'Sin archivo cargado'}
+                          {tieneArchivo ? archivo.nombre_original : 'Sin archivo cargado'}
                         </p>
                       </div>
                     </div>
@@ -252,12 +264,13 @@ function ExpedientesPage() {
         </main>
       </div>
       {pdfActivo && (
-        <VisorPDF
-          base64={pdfActivo.base64}
-          nombre={pdfActivo.nombre}
-          onCerrar={() => setPdfActivo(null)}
-        />
-      )}
+  <VisorPDF
+    url={pdfActivo.url}
+    nombre={pdfActivo.nombre}
+    onCerrar={() => setPdfActivo(null)}
+  />
+)}
+      
     </div>
   );
 }

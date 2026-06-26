@@ -1,7 +1,8 @@
 import React from 'react';
 
-function VisorPDF({ base64, nombre, onCerrar }) {
-  if (!base64) return null;
+function VisorPDF({ url, base64, nombre, onCerrar }) {
+  const fuente = url || base64;
+  if (!fuente) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
@@ -32,7 +33,7 @@ function VisorPDF({ base64, nombre, onCerrar }) {
 
         <div className="flex-1 p-1 overflow-hidden rounded-b-xl">
           <iframe
-            src={base64}
+            src={fuente}
             title={nombre || 'Documento PDF'}
             className="w-full h-full rounded-lg border-0"
           />

@@ -3,12 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import { getEmpleados } from '../services/empleadoService';
-import { obtenerArchivo, descargarArchivo } from '../services/expedienteService';
+import { listarDocumentos, descargarArchivo } from '../services/expedienteService';
 
 function MisExpedientesPage() {
   const navigate = useNavigate();
   const [empleados, setEmpleados] = useState([]);
   const [empleadoSeleccionado, setEmpleadoSeleccionado] = useState(null);
+  const [documentosSeleccionado, setDocumentosSeleccionado] = useState([]);
   const [busqueda, setBusqueda] = useState('');
   const [cargando, setCargando] = useState(true);
 
@@ -47,6 +48,12 @@ function MisExpedientesPage() {
     if (!iban) return '—';
     const limpio = iban.replace(/\s/g, '').toUpperCase();
     return limpio.match(/.{1,4}/g)?.join(' ') || limpio;
+  };
+
+  const seleccionarEmpleado = async (emp) => {
+    setEmpleadoSeleccionado(emp);
+    const docs = await listarDocumentos(emp.id);
+    setDocumentosSeleccionado(docs);
   };
 
   const empleadosFiltrados = empleados.filter((emp) => {
@@ -189,7 +196,7 @@ function MisExpedientesPage() {
                     { label: 'Curriculum (CV)', tipo: 'cv' },
                     { label: 'Cédula', tipo: 'cedula' },
                   ].map((doc) => {
-                    const archivo = obtenerArchivo(empleadoSeleccionado.id, doc.tipo);
+                    const archivo = documentosSeleccionado.find((d) => d.tipo === doc.tipo);
                     return (
                       <div key={doc.tipo}
                         className="flex items-center gap-3 p-3 rounded-lg border border-gray-100 bg-gray-50">
@@ -291,7 +298,7 @@ function MisExpedientesPage() {
                   <tbody className="divide-y divide-gray-100">
                     {empleadosFiltrados.map((emp) => (
                       <tr key={emp.id} className="hover:bg-gray-50 transition-colors cursor-pointer"
-                        onClick={() => setEmpleadoSeleccionado(emp)}>
+                        onClick={() => seleccionarEmpleado(emp)}>
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold flex-shrink-0">
@@ -308,7 +315,7 @@ function MisExpedientesPage() {
                         <td className="px-4 py-3 text-gray-600">{formatearFecha(emp.fechaIngreso)}</td>
                         <td className="px-4 py-3">
                           <button
-                            onClick={(e) => { e.stopPropagation(); setEmpleadoSeleccionado(emp); }}
+                            onClick={(e) => { e.stopPropagation(); seleccionarEmpleado(emp); }}
                             className="text-xs px-3 py-1.5 rounded-lg font-medium border border-pink-200 transition-colors"
                             style={{ background: '#FF33CC11', color: '#cc00a3' }}
                           >

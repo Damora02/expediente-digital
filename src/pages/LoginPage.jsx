@@ -10,6 +10,7 @@ function LoginPage() {
   const [form, setForm]         = useState({ usuario: '', password: '' });
   const [error, setError]       = useState('');
   const [cargando, setCargando] = useState(false);
+  const [mostrarPassword, setMostrarPassword] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -81,22 +82,32 @@ function LoginPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: '#FF33CC' }}>
-              Contrasena
-            </label>
-            <input
-              type="password"
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-              placeholder="Ingrese su contrasena"
-              autoComplete="current-password"
-              disabled={cargando}
-              className="w-full border border-cyan-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none disabled:bg-gray-50 transition bg-white"
-              onFocus={e => e.target.style.boxShadow = '0 0 0 2px #FF33CC55'}
-              onBlur={e => e.target.style.boxShadow = 'none'}
-            />
-          </div>
+  <label className="block text-sm font-medium mb-1" style={{ color: '#FF33CC' }}>
+    Contrasena
+  </label>
+  <div className="relative">
+    <input
+      type={mostrarPassword ? 'text' : 'password'}
+      name="password"
+      value={form.password}
+      onChange={handleChange}
+      placeholder="Ingrese su contrasena"
+      autoComplete="current-password"
+      disabled={cargando}
+      className="w-full border border-cyan-300 rounded-lg px-4 py-2.5 pr-10 text-sm focus:outline-none disabled:bg-gray-50 transition bg-white"
+      onFocus={e => e.target.style.boxShadow = '0 0 0 2px #FF33CC55'}
+      onBlur={e => e.target.style.boxShadow = 'none'}
+    />
+    <button
+      type="button"
+      onClick={() => setMostrarPassword((prev) => !prev)}
+      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+      tabIndex={-1}
+    >
+     {mostrarPassword ? '🚫👁️' : '👁️'}
+    </button>
+  </div>
+</div>
 
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg flex items-center gap-2">
