@@ -2,30 +2,34 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function TablaEmpleados({ empleados, onEditar, onEliminar }) {
+ 
   const navigate = useNavigate();
   const [busqueda, setBusqueda] = useState('');
+  
 
- const empleadosFiltrados = empleados.filter((emp) => {
-  const texto = busqueda.toLowerCase();
-  const textoSinGuiones = texto.replace(/\D/g, '');
-  return (
-    emp.nombre?.toLowerCase().includes(texto) ||
-    emp.apellido?.toLowerCase().includes(texto) ||
-    emp.numeroIdentificacion?.toLowerCase().includes(texto) ||
-    emp.numeroIdentificacion?.replace(/\D/g, '').includes(textoSinGuiones) ||
-    emp.cedula?.toLowerCase().includes(texto) ||
-    emp.puesto?.toLowerCase().includes(texto) ||
-    emp.lugarTrabajo?.toLowerCase().includes(texto) ||
-    emp.telefono?.toLowerCase().includes(texto) ||
-    emp.correo?.toLowerCase().includes(texto) ||
-    emp.nacionalidad?.toLowerCase().includes(texto) ||
-    emp.genero?.toLowerCase().includes(texto) ||
-    emp.estadoCivil?.toLowerCase().includes(texto)
-  );
-});
+  const empleadosFiltrados = empleados.filter((emp) => {
+    const texto = busqueda.toLowerCase();
+    const textoSinGuiones = texto.replace(/\D/g, '');
+    return (
+      emp.nombre?.toLowerCase().includes(texto) ||
+      emp.apellido?.toLowerCase().includes(texto) ||
+      emp.numeroIdentificacion?.toLowerCase().includes(texto) ||
+     (textoSinGuiones && emp.numeroIdentificacion?.replace(/\D/g, '').includes(textoSinGuiones)) ||
+      emp.cedula?.toLowerCase().includes(texto) ||
+      emp.puesto?.toLowerCase().includes(texto) ||
+      emp.lugarTrabajo?.toLowerCase().includes(texto) ||
+      emp.telefono?.toLowerCase().includes(texto) ||
+      emp.correo?.toLowerCase().includes(texto) ||
+      emp.nacionalidad?.toLowerCase().includes(texto) ||
+      emp.genero?.toLowerCase().includes(texto) ||
+      emp.estadoCivil?.toLowerCase().includes(texto)
+    );
+  });
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+     
+
 
       <div className="p-4 border-b border-gray-200 flex items-center justify-between gap-4">
         <h2 className="font-semibold text-gray-800">
@@ -80,15 +84,15 @@ function TablaEmpleados({ empleados, onEditar, onEliminar }) {
                       </p>
                     </div>
                   </td>
-                
+
                   <td className="px-4 py-3 text-gray-600">
-  {emp.numeroIdentificacion || emp.cedula || '—'}
-</td>
+                    {emp.numeroIdentificacion || emp.cedula || '—'}
+                  </td>
                   <td className="px-4 py-3 text-gray-600">{emp.telefono}</td>
                   <td className="px-4 py-3 text-gray-600">{emp.correo}</td>
                   <td className="px-4 py-3 text-gray-600">{emp.puesto}</td>
                   <td className="px-4 py-3 text-gray-600">{emp.lugarTrabajo || '—'}</td>
-                    
+
                   <td className="px-4 py-3 text-gray-600">
                     {emp.fechaIngreso
                       ? new Date(emp.fechaIngreso).toLocaleDateString('es-CR')
