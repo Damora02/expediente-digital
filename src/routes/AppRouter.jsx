@@ -7,6 +7,9 @@ import EmpleadosPage from '../pages/EmpleadosPage';
 import NuevoEmpleadoPage from '../pages/NuevoEmpleadoPage';
 import ExpedientesPage from '../pages/ExpedientesPage';
 import MisExpedientesPage from '../pages/MisExpedientesPage';
+import GestionUsuariosPage from '../pages/GestionUsuariosPage';
+import OlvideClavePage from '../pages/OlvideClavePage';
+import RestablecerClavepage from '../pages/restablecerClavepage';
 
 function AppRouter() {
   return (
@@ -14,6 +17,8 @@ function AppRouter() {
       <Routes>
 
         <Route path="/" element={<LoginPage />} />
+        <Route path="/olvide-clave" element={<OlvideClavePage />} />
+        <Route path="/restablecer-password" element={<RestablecerClavepage />} /> 
 
         <Route
           path="/dashboard"
@@ -68,6 +73,25 @@ function AppRouter() {
             </PrivateRoute>
           }
         />
+        <Route
+          path="/empleados/:id/editar"
+          element={
+            <PrivateRoute soloAdmin>
+              <NuevoEmpleadoPage />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/usuarios"
+          element={
+            <PrivateRoute soloAdmin>
+              <GestionUsuariosPage />
+            </PrivateRoute>
+          }
+        />
+
+        
 
         <Route path="*" element={<Navigate to="/" replace />} />
 

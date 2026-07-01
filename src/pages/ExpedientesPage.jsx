@@ -4,7 +4,7 @@ import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import VisorPDF from '../components/VisorPDF';
 import { getEmpleadoPorId } from '../services/empleadoService';
-import { listarDocumentos, subirArchivo, descargarArchivo, obtenerUrlArchivo } from '../services/expedienteService';
+import { listarDocumentos, subirArchivo, descargarArchivo, obtenerUrlArchivo, eliminarArchivo } from '../services/expedienteService';
 import { useAuth } from '../context/AuthContext';
 
 const DOCUMENTOS = [
@@ -106,6 +106,17 @@ const buscarDocumento = (tipo) => documentos.find((d) => d.tipo === tipo);
   }
 
   };
+  const handleEliminarDocumento = async (tipo, label) => {
+  const confirmar = window.confirm(`¿Desea eliminar el documento "${label}"? Esta accion no se puede deshacer.`);
+  if (!confirmar) return;
+  try {
+    await eliminarArchivo(empleadoId, tipo);
+    await cargarDocumentos();
+    alert('Documento eliminado correctamente');
+  } catch (err) {
+    alert('Error al eliminar el documento.');
+  }
+};
 
   if (cargando) {
     return (
@@ -159,7 +170,7 @@ const buscarDocumento = (tipo) => documentos.find((d) => d.tipo === tipo);
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 flex-1">
                 <div>
-                  <div className="flex flex-col"></div>
+                  
                   <p className="text-xs text-gray-400">
   {empleado?.tipoIdentificacion === 'extranjero' ? 'Núm. Extranjero' :
    empleado?.tipoIdentificacion === 'pasaporte' ? 'Pasaporte' : 'Cédula'}
@@ -239,21 +250,29 @@ const buscarDocumento = (tipo) => documentos.find((d) => d.tipo === tipo);
                         </p>
                       </div>
                     </div>
-                    <div className="flex flex-col gap-2">
-                      <button onClick={() => handleVer(tipo)} disabled={!tieneArchivo}
-                        className="w-full text-sm bg-blue-50 text-blue-700 hover:bg-blue-100 py-2 rounded-lg border border-blue-200 transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-medium">
-                        👁️ Visualizar
-                      </button>
-                      <button onClick={() => handleDescargar(tipo, label)} disabled={!tieneArchivo}
-                        className="w-full text-sm bg-green-50 text-green-700 hover:bg-green-100 py-2 rounded-lg border border-green-200 transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-medium">
-                        ⬇️ Descargar
-                      </button>
-                      <label className={`w-full text-sm text-center cursor-pointer py-2 rounded-lg transition-colors font-medium ${subiendo[tipo] ? 'bg-gray-50 text-gray-400 cursor-not-allowed' : 'bg-yellow-50 text-yellow-700 hover:bg-yellow-100 border border-yellow-200'}`}>
-                        {subiendo[tipo] ? 'Subiendo...' : tieneArchivo ? '🔄 Reemplazar' : '⬆️ Cargar archivo'}
-                        <input type="file" accept="application/pdf" className="hidden"
-                          disabled={subiendo[tipo]} onChange={(e) => handleSubir(e, tipo)} />
-                      </label>
-                    </div>
+             <div className="flex flex-col gap-2">  
+  <button onClick={() => handleVer(tipo)} disabled={!tieneArchivo}
+    className="w-full text-sm bg-blue-50 text-blue-700 hover:bg-blue-100 py-2 rounded-lg border border-blue-200 transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-medium">
+    👁️ Visualizar
+  </button>
+  <button onClick={() => handleDescargar(tipo, label)} disabled={!tieneArchivo}
+    className="w-full text-sm bg-green-50 text-green-700 hover:bg-green-100 py-2 rounded-lg border border-green-200 transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-medium">
+    ⬇️ Descargar
+  </button>
+  <label className={`w-full text-sm text-center cursor-pointer py-2 rounded-lg transition-colors font-medium ${subiendo[tipo] ? 'bg-gray-50 text-gray-400 cursor-not-allowed' : 'bg-yellow-50 text-yellow-700 hover:bg-yellow-100 border border-yellow-200'}`}>
+    {subiendo[tipo] ? 'Subiendo...' : tieneArchivo ? '🔄 Reemplazar' : '⬆️ Cargar archivo'}
+    <input type="file" accept="application/pdf" className="hidden"
+      disabled={subiendo[tipo]} onChange={(e) => handleSubir(e, tipo)} />
+  </label>
+  {tieneArchivo && (
+    <button onClick={() => handleEliminarDocumento(tipo, label)}
+      className="w-full text-sm bg-red-50 text-red-700 hover:bg-red-100 py-2 rounded-lg border border-red-200 transition-colors font-medium">
+      🗑️ Eliminar documento
+    </button>
+  )}
+
+                    
+                  </div>
                   </div>
                 );
               })}

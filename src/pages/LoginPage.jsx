@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { login as loginService } from '../services/authService';
+import FormularioPrimerIngreso from '../components/FormularioPrimerIngreso';
 
 function LoginPage() {
   const { login } = useAuth();
@@ -10,6 +11,7 @@ function LoginPage() {
   const [form, setForm]         = useState({ usuario: '', password: '' });
   const [error, setError]       = useState('');
   const [cargando, setCargando] = useState(false);
+  const [mostrarPrimerIngreso, setMostrarPrimerIngreso] = useState(false);
   const [mostrarPassword, setMostrarPassword] = useState(false);
 
   const handleChange = (e) => {
@@ -26,17 +28,17 @@ function LoginPage() {
     }
     setCargando(true);
     try {
-      const resultado = await loginService(form.usuario, form.password);
-      if (resultado) {
-        login(resultado);
-        if (resultado.rol === 'admin') {
-          navigate('/dashboard');
-        } else {
-          navigate('/dashboard');
-        }
-      } else {
-        setError('Usuario o contrasena incorrectos');
-      }
+     const resultado = await loginService(form.usuario, form.password);
+if (resultado) {
+  login(resultado);
+  if (resultado.debeCambiarPassword) {
+    setMostrarPrimerIngreso(true);
+  } else {
+    navigate('/dashboard');
+  }
+} else {
+  setError('Usuario o contrasena incorrectos');
+}
     } catch (err) {
        setError(err.message || 'Error de conexion. Verifique que el servidor este corriendo en el puerto 3001.');
     } finally {
@@ -47,7 +49,7 @@ function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4"
       style={{ background: '#FF33CC' }}>
-      <div className="rounded-2xl shadow-xl w-full max-w-md p-8"
+     <div className="rounded-2xl shadow-xl w-full max-w-md p-8"
   style={{ background: '#00BFFF', border: '1px solid #0099cc' }}>
 
         <div className="text-center mb-8">
@@ -135,8 +137,20 @@ function LoginPage() {
           </button>
         </form>
 
-       
+        <Link to="/olvide-clave" className="block text-center text-sm mt-4" style={{ color: '#cc00a3' }}>
+          ¿Olvidó su contraseña?
+        </Link>
+
       </div>
+
+      {mostrarPrimerIngreso && (
+        <FormularioPrimerIngreso
+          onCompletado={() => {
+            setMostrarPrimerIngreso(false);
+            navigate('/dashboard');
+          }}
+        />
+      )}
     </div>
   );
 }

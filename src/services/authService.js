@@ -28,3 +28,15 @@ export const login = async (usuario, password) => {
     throw new Error('No se pudo conectar con el servidor');
   }
 };
+export const solicitarRecuperacion = async (correo) => {
+  const response = await axios.post(`${BASE_URL}/auth/olvide-password`, { correo });
+  return response.data;
+};
+
+export const restablecerPassword = async (token, passwordNueva) => {
+  const response = await axios.post(`${BASE_URL}/auth/restablecer-password`, {
+    token,
+    passwordNueva,
+  });
+  return response.data;
+};

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 function Reloj() {
@@ -28,10 +28,16 @@ function Reloj() {
 }
 
 function Sidebar() {
-  const { usuario } = useAuth();
+  const { usuario, logout } = useAuth();
+  const navigate = useNavigate();
   const esAdmin = usuario?.rol === 'admin';
   const [open, setOpen] = useState(false);
   const [expedientesOpen, setExpedientesOpen] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   const itemClase = ({ isActive }) =>
     `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
@@ -91,6 +97,18 @@ function Sidebar() {
             </NavLink>
           )}
 
+          {esAdmin && (
+            <NavLink
+              to="/usuarios"
+              className={itemClase}
+              onClick={() => setOpen(false)}
+              style={({ isActive }) => isActive ? { background: '#FF33CC' } : {}}
+            >
+              <span className="text-lg">🔐</span>
+              Usuarios
+            </NavLink>
+          )}
+
           {/* Expedientes con subcarpeta para empleado */}
           {!esAdmin && (
             <div>
@@ -132,9 +150,17 @@ function Sidebar() {
           </p>
         </div>
 
+        <button
+          onClick={handleLogout}
+          className="mt-2 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors"
+        >
+          <span className="text-lg">🚪</span>
+          Cerrar sesión
+        </button>
       </div>
+
     </>
   );
 }
 
-export default Sidebar; 
+export default Sidebar;
