@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import { crearUsuario } from '../services/usuarioService';
@@ -7,7 +7,7 @@ import { crearUsuario } from '../services/usuarioService';
 const VACIO = { usuario: '', correo: '', password: '', rol: 'visor' };
 
 function GestionUsuariosPage() {
-  const navigate = useNavigate();
+  
   const [form, setForm] = useState(VACIO);
   const [error, setError] = useState('');
   const [exito, setExito] = useState('');
@@ -51,20 +51,16 @@ function GestionUsuariosPage() {
       <div className="flex flex-1">
         <Sidebar />
         <main className="flex-1 p-6 pl-14">
-          <div className="flex items-center gap-3 mb-6">
-            <button
-              onClick={() => navigate('/dashboard')}
-              className="text-gray-500 hover:text-gray-800 hover:bg-gray-100 p-2 rounded-lg transition-colors"
-            >
-              ← Volver
-            </button>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-800">Gestión de usuarios</h1>
-              <p className="text-gray-500 text-sm mt-0.5">Crear nuevas cuentas de acceso al sistema</p>
-            </div>
-          </div>
+          <div className="mb-8 text-center">
+  <h1 className="text-3xl font-bold text-gray-800">
+    Gestión de usuarios
+  </h1>
+  <p className="mt-2 text-gray-500">
+    Crear nuevas cuentas de acceso al sistema
+  </p>
+</div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 max-w-lg">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 max-w-lg mx-auto">
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Usuario</label>
@@ -127,12 +123,13 @@ function GestionUsuariosPage() {
               )}
 
               <button
-                type="submit"
-                disabled={cargando}
-                className="w-full bg-blue-600 text-white font-semibold py-2.5 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-60"
-              >
-                {cargando ? 'Creando...' : 'Crear usuario'}
-              </button>
+  type="submit"
+  disabled={cargando}
+  style={{ backgroundColor: '#00BFFF' }}
+  className="w-full text-white font-semibold py-2.5 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-60"
+>
+  {cargando ? 'Creando usuario...' : 'Crear usuario'}
+</button>
             </form>
           </div>
         </main>
