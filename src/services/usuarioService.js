@@ -25,3 +25,17 @@ export const cambiarPassword = async (passwordActual, passwordNueva) => {
   });
   return response.data;
 };
+export const listarUsuarios = async () => {
+  const response = await axios.get(`${BASE_URL}/auth/usuarios`);
+  return response.data;
+};
+
+export const cambiarRol = async (id, rol) => {
+  const response = await axios.put(`${BASE_URL}/auth/usuarios/${id}/rol`, { rol });
+  return response.data;
+};
+
+export const eliminarUsuario = async (id) => {
+  const response = await axios.delete(`${BASE_URL}/auth/usuarios/${id}`);
+  return response.data;
+};
