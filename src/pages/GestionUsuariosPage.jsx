@@ -62,17 +62,19 @@ function GestionUsuariosPage() {
     }
   };
 
-  const handleCambiarRol = async (id, rolActual) => {
-    const nuevoRol = rolActual === 'admin' ? 'visor' : 'admin';
-    const confirmar = window.confirm(`¿Cambiar el rol de este usuario a "${nuevoRol}"?`);
-    if (!confirmar) return;
-    try {
-      await cambiarRol(id, nuevoRol);
-      cargarUsuarios();
-    } catch (err) {
-      alert(err.response?.data?.error || 'Error al cambiar el rol');
-    }
-  };
+  const handleCambiarRol = async (id, rolActual, nombreUsuario) => {
+  const nuevoRol = rolActual === 'admin' ? 'visor' : 'admin';
+  const confirmar = window.confirm(
+    `¿Seguro que deseas cambiar a "${nombreUsuario}" de "${rolActual}" a "${nuevoRol}"?`
+  );
+  if (!confirmar) return;
+  try {
+    await cambiarRol(id, nuevoRol);
+    cargarUsuarios();
+  } catch (err) {
+    alert(err.response?.data?.error || 'Error al cambiar el rol');
+  }
+};
 
   const handleEliminar = async (id, nombreUsuario) => {
     const confirmar = window.confirm(`¿Eliminar permanentemente al usuario "${nombreUsuario}"? Esta accion no se puede deshacer.`);
@@ -180,7 +182,7 @@ function GestionUsuariosPage() {
                         {u.id !== usuarioActual?.id ? (
                           <>
                             <button
-  onClick={() => handleCambiarRol(u.id, u.rol)}
+   onClick={() => handleCambiarRol(u.id, u.rol, u.usuario)}
   className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-[#00BFFF] text-white hover:bg-[#0099cc] transition-colors font-medium shadow-sm"
   title="Cambiar rol"
 >
