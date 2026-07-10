@@ -68,11 +68,9 @@ function DashboardPage() {
             <p className="text-gray-400 text-sm mt-2">
               {new Date().toLocaleDateString('es-CR')}
             </p>
-            <span className="mt-3 text-xs font-medium px-3 py-1.5 rounded-full border"
-              style={{ color: '#FF33CC', background: '#FF33CC15', borderColor: '#FF33CC44' }}>
-              Sesión activa
-            </span>
-          </div>
+          
+  
+</div>
 
          {/* ADMIN: estadísticas */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
