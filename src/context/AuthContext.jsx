@@ -7,7 +7,6 @@ export function AuthProvider({ children }) {
     const guardado = localStorage.getItem('usuario_sesion');
     return guardado ? JSON.parse(guardado) : null;
   });
-
   const [cargando, setCargando] = useState(false);
 
   useEffect(() => {
@@ -18,6 +17,8 @@ export function AuthProvider({ children }) {
     }
   }, [usuario]);
 
+  // datosUsuario ahora incluye tanto los datos del usuario como su token
+  // Ejemplo: { id: 1, usuario: 'admin', rol: 'admin', token: 'eyJhbGc...' }
   const login = (datosUsuario) => {
     setUsuario(datosUsuario);
   };
@@ -42,3 +43,4 @@ export function useAuth() {
 }
 
 export default AuthContext;
+

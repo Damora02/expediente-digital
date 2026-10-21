@@ -270,8 +270,8 @@ function FormularioEmpleado({ datosIniciales, onGuardar, cargando }) {
       </p>
   }
 </div>
-          <Campo label="Telefono"           name="telefono"     value={form.telefono}     onChange={handleChange} disabled={cargando} error={errores.telefono} />
-          <Campo label="Correo electronico" name="correo"       value={form.correo}       onChange={handleChange} disabled={cargando} error={errores.correo} type="email" />
+          <Campo label="Teléfono"           name="telefono"     value={form.telefono}     onChange={handleChange} disabled={cargando} error={errores.telefono} />
+          <Campo label="Correo electrónico" name="correo"       value={form.correo}       onChange={handleChange} disabled={cargando} error={errores.correo} type="email" />
           <Campo label="Puesto"             name="puesto"       value={form.puesto}       onChange={handleChange} disabled={cargando} error={errores.puesto} />
           <Campo label="Fecha de ingreso"   name="fechaIngreso" value={form.fechaIngreso} onChange={handleChange} disabled={cargando} error={errores.fechaIngreso} type="date" />
           <Campo label="Lugar de trabajo"   name="lugarTrabajo" value={form.lugarTrabajo} onChange={handleChange} disabled={cargando} error={errores.lugarTrabajo} />

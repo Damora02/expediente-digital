@@ -120,9 +120,9 @@ function GestionUsuariosPage() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Contraseña inicial</label>
                   <input type="text" name="password" value={form.password} onChange={handleChange}
-                    disabled={cargando} placeholder="Minimo 6 caracteres"
+                    disabled={cargando} placeholder="Mínimo 6 caracteres"
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#00BFFF] focus:border-[#00BFFF]" />
-                  <p className="text-xs text-gray-400 mt-1">El usuario deberá cambiarla en su primer ingreso.</p>
+                  <p className="text-xs text-gray-400 mt-1">El usuario debe cambiarla en su primer ingreso.</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Rol</label>
